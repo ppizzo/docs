@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown, una guida per iniziare</title>
+<meta name="description" content="Introduzione al Markdown per chi non l'ha mai usato: perché preferirlo ai programmi WYSIWYG, sintassi di base, link, immagini, codice, tabelle, GitHub Flavored Markdown e conversione in altri formati.">
+
+<!-- Apply theme before first paint to avoid flash -->
+<script>
+(function () {
+  try {
+    var pref = localStorage.getItem('theme') || 'auto';
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var dark = pref === 'dark' || (pref === 'auto' && prefersDark);
+    var root = document.documentElement;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    root.setAttribute('data-theme-pref', pref);
+  } catch (e) {}
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   Theme tokens
+   ============================================================ */
+:root {
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-comic: 'Comic Neue', 'Comic Sans MS', cursive;
+
+  /* Light theme (warm paper) */
+  --bg: #f7f2e9;
+  --bg-grain: #efe8da;
+  --surface: #fffdf8;
+  --surface-2: #f3ecdd;
+  --ink: #221d15;
+  --ink-soft: #4d4536;
+  --muted: #7c7263;
+  --border: #e3d9c7;
+  --border-strong: #d3c6ae;
+  --accent: #cf4b22;
+  --accent-ink: #b23c17;
+  --accent-soft: #fbe7dc;
+  --teal: #2c8a7c;
+  --teal-soft: #d9efe9;
+  --amber: #b8852a;
+  --amber-soft: #f7ebcf;
+  --shadow: 0 1px 2px rgba(40, 30, 12, .05), 0 12px 30px -16px rgba(40, 30, 12, .22);
+  --shadow-sm: 0 1px 2px rgba(40, 30, 12, .06);
+  --code-bg: #faf5e9;
+  --code-ink: #3a3326;
+  --code-comment: #978a70;
+  --code-string: #9c5a16;
+  --code-prompt: #b23c17;
+  --code-border: #e8dec9;
+  --code-head: #f1e8d6;
+  --code-name: #8c7f67;
+  --code-scroll: #d3c6ae;
+  --code-ok: #3f9d52;
+  --sel: #f7d9c9;
+
+  /* Diagram palette */
+  --dgm-ink: #2a2317;
+  --dgm-muted: #7c7263;
+  --dgm-arrow: #94886f;
+  --dgm-box-fill: #fffdf8;
+  --dgm-box-stroke: #cbb99c;
+  --dgm-work-fill: #fbe6dc;   --dgm-work-stroke: #d98a63;
+  --dgm-stage-fill: #e6efd5;  --dgm-stage-stroke: #8aa758;
+  --dgm-repo-fill: #dde8f4;   --dgm-repo-stroke: #5f8fbb;
+  --dgm-commit-fill: #f1ead9; --dgm-commit-stroke: #b89a63;
+  --dgm-branch-fill: #d8ecc8; --dgm-branch-stroke: #6ba24e; --dgm-branch-ink: #36621f;
+  --dgm-head-fill: #f8ecc0;   --dgm-head-stroke: #d4ad4a;   --dgm-head-ink: #715310;
+  --dgm-tag-fill: #f7ddc6;    --dgm-tag-stroke: #d98a52;    --dgm-tag-ink: #8a4719;
+  --dgm-remote-fill: #e7e0f1; --dgm-remote-stroke: #8a78b8;
+  --dgm-blob: #ece3d0;        --dgm-blob-stroke: #c5b594;
+}
+
+[data-theme="dark"] {
+  --bg: #14110b;
+  --bg-grain: #1a1610;
+  --surface: #1d1810;
+  --surface-2: #241e15;
+  --ink: #ece4d4;
+  --ink-soft: #c8bda8;
+  --muted: #9a8e79;
+  --border: #2e2719;
+  --border-strong: #3c3422;
+  --accent: #ff7a4d;
+  --accent-ink: #ff8d63;
+  --accent-soft: #38211a;
+  --teal: #58c3b1;
+  --teal-soft: #163029;
+  --amber: #e0b35a;
+  --amber-soft: #322713;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 40px -22px rgba(0, 0, 0, .8);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35);
+  --code-bg: #0e0c08;
+  --code-ink: #e4dac6;
+  --code-comment: #8e8064;
+  --code-string: #e0a86b;
+  --code-prompt: #ff8159;
+  --code-border: rgba(255,255,255,.09);
+  --code-head: rgba(255,255,255,.025);
+  --code-name: #9a8f78;
+  --code-scroll: rgba(255,255,255,.14);
+  --code-ok: #7fd08c;
+  --sel: #4a2e1f;
+
+  --dgm-ink: #ece4d4;
+  --dgm-muted: #9a8e79;
+  --dgm-arrow: #8f846f;
+  --dgm-box-fill: #221c12;
+  --dgm-box-stroke: #4a4029;
+  --dgm-work-fill: #3a261c;   --dgm-work-stroke: #d98a63;
+  --dgm-stage-fill: #232f18;  --dgm-stage-stroke: #8aa758;
+  --dgm-repo-fill: #182838;   --dgm-repo-stroke: #5f8fbb;
+  --dgm-commit-fill: #2c2417; --dgm-commit-stroke: #b89a63;
+  --dgm-branch-fill: #1e3315; --dgm-branch-stroke: #6ba24e; --dgm-branch-ink: #a9d98c;
+  --dgm-head-fill: #362c10;   --dgm-head-stroke: #d4ad4a;   --dgm-head-ink: #f1d484;
+  --dgm-tag-fill: #3a2415;    --dgm-tag-stroke: #d98a52;    --dgm-tag-ink: #f2b083;
+  --dgm-remote-fill: #251f33; --dgm-remote-stroke: #8a78b8;
+  --dgm-blob: #2a2417;        --dgm-blob-stroke: #4d4329;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1100px 520px at 88% -8%, var(--accent-soft) 0%, transparent 55%),
+    radial-gradient(900px 480px at -6% 4%, var(--teal-soft) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.72;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--sel); }
+
+a {
+  color: var(--accent-ink);
+  text-decoration-color: color-mix(in srgb, var(--accent-ink) 35%, transparent);
+  text-underline-offset: 3px;
+  transition: color .15s ease;
+}
+a:hover { color: var(--accent); }
+
+/* ============================================================
+   Reading progress
+   ============================================================ */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--amber));
+  z-index: 60; transition: width .1s linear;
+}
+
+/* ============================================================
+   Top bar
+   ============================================================ */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px clamp(16px, 2vw, 28px);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(1.3) blur(12px);
+  -webkit-backdrop-filter: saturate(1.3) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; min-width: 0; }
+.brand .glyph {
+  flex: none; width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: 11px;
+  background: linear-gradient(145deg, var(--accent), #e8632f);
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.brand .glyph svg { width: 23px; height: 23px; display: block; }
+.brand .title { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.brand .title b {
+  font-family: var(--font-display); font-weight: 600; font-size: 19px;
+  letter-spacing: -.01em; color: var(--ink);
+}
+.brand .title span { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.toolbtn {
+  flex: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 12px;
+  font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: 10px; box-shadow: var(--shadow-sm);
+  transition: border-color .15s ease, transform .1s ease, color .15s ease;
+}
+.toolbtn:hover { border-color: var(--accent); color: var(--accent-ink); }
+.toolbtn:active { transform: translateY(1px); }
+.toolbtn svg { width: 17px; height: 17px; }
+.toolbtn .lbl { text-transform: capitalize; }
+#menuBtn { display: none; }
+
+/* theme icon visibility */
+[data-theme-pref="auto"]  #themeBtn .i-auto,
+[data-theme-pref="light"] #themeBtn .i-light,
+[data-theme-pref="dark"]  #themeBtn .i-dark { display: inline; }
+#themeBtn svg { display: none; }
+
+/* language dropdown */
+.langwrap { position: relative; flex: none; }
+#langBtn { gap: 7px; }
+#langBtn .lbl { text-transform: none; font-weight: 600; }
+#langBtn .chev { width: 13px; height: 13px; opacity: .55; transition: transform .2s ease; }
+#langBtn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.flag {
+  width: 22px; height: 15px; flex: none; display: inline-block;
+  border-radius: 3px; overflow: hidden; vertical-align: middle;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 16%, transparent);
+}
+.langmenu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 80;
+  margin: 0; padding: 6px; list-style: none; min-width: 172px;
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: 12px; box-shadow: var(--shadow);
+  opacity: 0; transform: translateY(-6px) scale(.98); transform-origin: top right;
+  pointer-events: none; transition: opacity .16s ease, transform .16s ease;
+}
+.langwrap.open .langmenu { opacity: 1; transform: none; pointer-events: auto; }
+.langmenu li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-body); font-size: 15.5px; color: var(--ink-soft);
+}
+.langmenu li:hover, .langmenu li:focus-visible { background: var(--surface-2); color: var(--ink); outline: none; }
+.langmenu li[aria-selected="true"] { color: var(--accent-ink); font-weight: 600; }
+.langmenu li[aria-selected="true"] span::after { content: "✓"; margin-left: auto; padding-left: 10px; color: var(--accent); }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: clamp(20px, 2.4vw, 40px);
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 2vw, 28px);
+}
+
+/* ---- Sidebar / TOC ---- */
+.sidebar { position: relative; }
+.toc-wrap {
+  position: sticky; top: 86px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  padding: 26px 14px 40px 0;
+  scrollbar-width: thin;
+}
+.toc-wrap::-webkit-scrollbar { width: 7px; }
+.toc-wrap::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+.toc-kicker {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+  padding: 0 14px; margin-bottom: 14px;
+}
+.toc { list-style: none; margin: 0; padding: 0; }
+.toc li { margin: 1px 0; }
+.toc a {
+  display: flex; align-items: baseline; gap: 11px;
+  padding: 7px 14px; border-radius: 9px;
+  color: var(--ink-soft); text-decoration: none;
+  font-size: 15.5px; line-height: 1.35;
+  border-left: 2px solid transparent;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.toc a .num {
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 500;
+  color: var(--muted); flex: none; padding-top: 1px;
+}
+.toc a:hover { background: var(--surface-2); color: var(--ink); }
+.toc a.active {
+  background: var(--accent-soft); color: var(--accent-ink);
+  border-left-color: var(--accent); font-weight: 600;
+}
+.toc a.active .num { color: var(--accent); }
+
+/* ============================================================
+   Main / article
+   ============================================================ */
+main { padding: 8px 0 80px; min-width: 0; }
+.article { max-width: 1160px; }
+/* running text fills the content column; the browser decides the line breaks */
+
+/* Hero */
+.hero { padding: clamp(28px, 6vw, 64px) 0 26px; }
+.hero .eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 22px;
+}
+.hero h1 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(40px, 7vw, 68px); line-height: 1.02;
+  letter-spacing: -.025em; margin: 0 0 18px;
+  color: var(--ink);
+}
+.hero h1 em { font-style: italic; color: var(--accent-ink); font-weight: 500; }
+.hero .lead {
+  font-size: clamp(18px, 2.4vw, 21px); line-height: 1.6;
+  color: var(--ink-soft); margin: 0;
+}
+.hero .meta {
+  margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px;
+}
+.chip {
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--ink-soft); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; box-shadow: var(--shadow-sm);
+}
+.chip b { color: var(--accent-ink); font-weight: 600; }
+
+/* Sections */
+.section { padding-top: 30px; scroll-margin-top: 92px; }
+.section + .section { margin-top: 26px; }
+.section > .sec-head {
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 0 6px;
+}
+.section .sec-num {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+  color: var(--accent); letter-spacing: .04em;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--accent-soft);
+  border-radius: 8px; padding: 3px 9px; flex: none;
+}
+.section h2 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(27px, 4vw, 36px); line-height: 1.12;
+  letter-spacing: -.02em; margin: 0; color: var(--ink);
+}
+.section .rule {
+  height: 1px; margin: 18px 0 22px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+}
+
+h3 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 21px; letter-spacing: -.01em;
+  margin: 34px 0 8px; color: var(--ink);
+}
+h3 .h-mono { font-family: var(--font-mono); font-size: 17px; color: var(--accent-ink); font-weight: 500; }
+
+p { margin: 14px 0; }
+.article ul, .article ol { margin: 14px 0; padding-left: 22px; }
+.article li { margin: 7px 0; }
+.article li::marker { color: var(--accent); }
+strong { font-weight: 600; color: var(--ink); }
+
+code.inline {
+  font-family: var(--font-mono); font-size: .86em;
+  background: var(--surface-2); color: var(--accent-ink);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: .1em .42em; white-space: nowrap;
+}
+
+/* ============================================================
+   Code blocks
+   ============================================================ */
+.code {
+  position: relative; margin: 20px 0;
+  border-radius: 13px; overflow: hidden;
+  background: var(--code-bg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--code-border);
+}
+.code-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: var(--code-head);
+  border-bottom: 1px solid var(--code-border);
+}
+.code-head .dots { display: flex; gap: 6px; }
+.code-head .dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.code-head .dots i:nth-child(1) { background: #e8654b; }
+.code-head .dots i:nth-child(2) { background: #e0b14a; }
+.code-head .dots i:nth-child(3) { background: #5cae6b; }
+.code-head .name {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--code-name);
+  margin-left: 4px; letter-spacing: .02em;
+}
+.copy {
+  margin-left: auto; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 11.5px;
+  color: var(--code-name); background: color-mix(in srgb, var(--code-ink) 7%, transparent);
+  border: 1px solid var(--code-border); border-radius: 7px;
+  padding: 4px 9px; transition: all .15s ease;
+}
+.copy:hover { color: var(--code-ink); border-color: var(--accent); }
+.copy svg { width: 14px; height: 14px; }
+.copy.done { color: var(--code-ok); border-color: color-mix(in srgb, var(--code-ok) 50%, transparent); }
+.code pre {
+  margin: 0; padding: 16px 18px; overflow-x: auto;
+  font-family: var(--font-mono); font-size: 13.6px; line-height: 1.7;
+  color: var(--code-ink);
+  scrollbar-width: thin;
+}
+.code pre::-webkit-scrollbar { height: 8px; }
+.code pre::-webkit-scrollbar-thumb { background: var(--code-scroll); border-radius: 4px; }
+.code .tok-c { color: var(--code-comment); font-style: italic; }
+.code .tok-s { color: var(--code-string); }
+.code .tok-p { color: var(--code-prompt); font-weight: 600; user-select: none; }
+
+/* ============================================================
+   Callouts
+   ============================================================ */
+.note {
+  display: grid; grid-template-columns: auto 1fr; gap: 14px;
+  margin: 22px 0; padding: 16px 18px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 11px; box-shadow: var(--shadow-sm);
+}
+.note.tip { border-left-color: var(--teal); }
+.note.warn { border-left-color: var(--amber); }
+.note .ic {
+  flex: none; width: 24px; height: 24px; margin-top: 2px;
+  color: var(--accent);
+}
+.note.tip .ic { color: var(--teal); }
+.note.warn .ic { color: var(--amber); }
+.note .ic svg { width: 24px; height: 24px; }
+.note .bd { font-size: 16px; line-height: 1.6; }
+.note .bd b { display: block; margin-bottom: 2px; font-family: var(--font-display); font-size: 16px; }
+.note .bd p { margin: 6px 0 0; }
+.note .bd p:first-of-type { margin-top: 0; }
+
+/* ============================================================
+   Tables
+   ============================================================ */
+.table-wrap { margin: 22px 0; overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+table { width: 100%; border-collapse: collapse; background: var(--surface); font-size: 15.5px; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+thead th {
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
+  background: var(--surface-2);
+}
+tbody tr:last-child td { border-bottom: none; }
+td code, th code {
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--accent-ink); white-space: nowrap;
+}
+
+/* ============================================================
+   Diagrams
+   ============================================================ */
+figure.diagram {
+  margin: 30px auto; padding: 22px 20px 14px;
+  max-width: 870px;
+  background: var(--surface);
+  border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+figure.diagram .dgm { width: 100%; height: auto; display: block; overflow: visible; }
+figure.diagram figcaption {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px dashed var(--border-strong);
+  font-size: 14px; color: var(--muted); text-align: center; font-style: italic;
+}
+
+/* shared SVG diagram styling (drives light/dark via CSS vars) */
+.dgm text { fill: var(--dgm-ink); font-family: var(--font-mono); }
+.dgm .edge { stroke: var(--dgm-arrow); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.dgm .edge-d { stroke: var(--dgm-arrow); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5; }
+.dgm .box  { fill: var(--dgm-box-fill);  stroke: var(--dgm-box-stroke);  stroke-width: 2; }
+.dgm .work { fill: var(--dgm-work-fill);  stroke: var(--dgm-work-stroke);  stroke-width: 2; }
+.dgm .stage{ fill: var(--dgm-stage-fill); stroke: var(--dgm-stage-stroke); stroke-width: 2; }
+.dgm .repo { fill: var(--dgm-repo-fill);  stroke: var(--dgm-repo-stroke);  stroke-width: 2; }
+.dgm .remote { fill: var(--dgm-remote-fill); stroke: var(--dgm-remote-stroke); stroke-width: 2; }
+.dgm .commit { fill: var(--dgm-commit-fill); stroke: var(--dgm-commit-stroke); stroke-width: 2.5; }
+.dgm .blob { fill: var(--dgm-blob); stroke: var(--dgm-blob-stroke); stroke-width: 1.5; }
+.dgm .branch { fill: var(--dgm-branch-fill); stroke: var(--dgm-branch-stroke); stroke-width: 2; }
+.dgm .branch-t { fill: var(--dgm-branch-ink); font-weight: 600; }
+.dgm .head { fill: var(--dgm-head-fill); stroke: var(--dgm-head-stroke); stroke-width: 2; }
+.dgm .head-t { fill: var(--dgm-head-ink); font-weight: 600; }
+.dgm .tag { fill: var(--dgm-tag-fill); stroke: var(--dgm-tag-stroke); stroke-width: 2; }
+.dgm .tag-t { fill: var(--dgm-tag-ink); font-weight: 600; }
+.dgm .t  { text-anchor: middle; }
+.dgm .hash { font-size: 14px; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+.dgm .cap { fill: var(--dgm-muted); font-size: 13px; text-anchor: middle; }
+.dgm .lbl { font-size: 13px; text-anchor: middle; }
+.dgm .area-name { font-family: var(--font-body); font-weight: 600; font-size: 15px; text-anchor: middle; }
+.dgm .cmd { font-size: 13px; text-anchor: middle; fill: var(--dgm-ink); }
+
+/* ============================================================
+   References / footer
+   ============================================================ */
+.refs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 22px 0; }
+.refcard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 13px; padding: 18px 18px 14px; box-shadow: var(--shadow-sm);
+}
+.refcard h4 {
+  margin: 0 0 10px; font-family: var(--font-display); font-size: 17px; color: var(--ink);
+  display: flex; align-items: center; gap: 9px;
+}
+.refcard h4 svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+.refcard ul { list-style: none; margin: 0; padding: 0; }
+.refcard li { margin: 7px 0; font-size: 15px; line-height: 1.4; }
+.refcard a { word-break: break-word; }
+.refcard .d { display: block; font-size: 12.5px; color: var(--muted); font-family: var(--font-mono); }
+
+.learn {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 18px 0 4px; padding: 9px 14px;
+  font-size: 14.5px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; color: var(--ink-soft); text-decoration: none;
+  transition: border-color .15s ease, color .15s ease;
+}
+.learn:hover { border-color: var(--accent); color: var(--accent-ink); }
+.learn svg { width: 16px; height: 16px; color: var(--accent); flex: none; }
+
+.foot {
+  margin-top: 60px; padding-top: 26px;
+  border-top: 1px solid var(--border);
+  font-size: 14px; color: var(--muted); line-height: 1.6;
+}
+.foot a { color: var(--ink-soft); }
+.foot .license-note { margin-top: 4px; }
+.cc-badge { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px; color: var(--ink-soft); }
+.cc-badge svg { width: 24px; height: 24px; fill: currentColor; display: block; }
+.cc-badge:hover { color: var(--accent); }
+
+/* reveal on scroll */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ============================================================
+   Mobile
+   ============================================================ */
+.scrim { display: none; }
+@media (max-width: 980px) {
+  body { font-size: 17px; }
+  #menuBtn { display: inline-flex; }
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; z-index: 70;
+    width: min(86vw, 320px); height: 100%;
+    background: var(--bg); border-right: 1px solid var(--border);
+    transform: translateX(-102%); transition: transform .28s ease;
+    box-shadow: 0 0 60px -10px rgba(0,0,0,.4);
+  }
+  body.nav-open .sidebar { transform: none; }
+  .toc-wrap { position: static; max-height: none; height: 100%; padding: 70px 16px 40px 16px; }
+  .scrim {
+    display: block; position: fixed; inset: 0; z-index: 65;
+    background: rgba(10,8,4,.5); opacity: 0; pointer-events: none;
+    transition: opacity .28s ease;
+  }
+  body.nav-open .scrim { opacity: 1; pointer-events: auto; }
+}
+@media (min-width: 981px) { #menuBtn { display: none; } }
+
+/* ============================================================
+   Markdown demo: source vs rendered (this page only)
+   ============================================================ */
+.md-demo { margin: 22px 0; }
+.md-demo-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 18px; align-items: start;
+}
+.md-demo-grid > .code { margin: 0; height: 100%; }
+.md-render {
+  display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 13px; overflow: hidden; box-shadow: var(--shadow);
+}
+.md-render .rh {
+  margin: 0; padding: 11px 16px;
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .02em;
+  color: var(--muted); background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.md-render .rb { padding: 16px 20px 20px; font-size: 16px; line-height: 1.6; }
+.md-render .rb > :first-child { margin-top: 0; }
+.md-render .rb > :last-child { margin-bottom: 0; }
+.md-render .rb .md-h1 {
+  font-family: var(--font-display); font-size: 21px; font-weight: 600;
+  letter-spacing: -.01em; color: var(--ink);
+  margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.md-render .rb .md-h2 { font-family: var(--font-display); font-size: 17.5px; font-weight: 600; color: var(--ink); margin: 13px 0 4px; }
+.md-render .rb .md-h3 { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--ink-soft); margin: 11px 0 4px; }
+.md-render .rb p { margin: 11px 0; }
+.md-render .rb ul, .md-render .rb ol { margin: 11px 0; padding-left: 24px; }
+.md-render .rb li { margin: 5px 0; }
+.md-render .rb li::marker { color: var(--accent); }
+.md-render .rb ol li::marker { font-family: var(--font-mono); font-size: .9em; }
+.md-render .rb ul.tasks { list-style: none; padding-left: 2px; }
+.md-render .rb ul.tasks li { display: flex; align-items: center; gap: 10px; }
+.md-render .rb ul.tasks input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.md-render .rb blockquote {
+  margin: 12px 0; padding: 7px 15px;
+  border-left: 3px solid var(--teal); border-radius: 0 9px 9px 0;
+  background: var(--teal-soft); color: var(--ink-soft);
+}
+.md-render .rb blockquote p { margin: 4px 0; }
+.md-render .rb code {
+  font-family: var(--font-mono); font-size: .84em;
+  background: var(--surface-2); color: var(--accent-ink);
+  border: 1px solid var(--border); border-radius: 6px; padding: .1em .42em;
+}
+.md-render .rb hr { border: none; border-top: 1px solid var(--border-strong); margin: 14px 0; }
+.md-render .rb del { color: var(--muted); }
+.md-render .rb a { color: var(--accent-ink); text-underline-offset: 2px; }
+.md-render .rb sup { font-size: .72em; }
+.md-render .rb sup.fnref { color: var(--accent-ink); font-weight: 600; }
+.md-render .rb .fn { font-size: 13.5px; color: var(--ink-soft); margin: 6px 0 0; }
+.md-render .rb table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 6px 0; }
+.md-render .rb th, .md-render .rb td { border: 1px solid var(--border); padding: 5px 9px; text-align: left; }
+.md-render .rb thead th {
+  background: var(--surface-2); font-family: var(--font-mono);
+  font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+}
+.md-render .rb pre.md-cb {
+  margin: 6px 0; padding: 11px 13px; overflow-x: auto;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px;
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--ink);
+}
+.md-render .rb svg.md-img { display: block; width: 100%; max-width: 240px; height: auto; margin: 8px 0; }
+.md-demo figcaption {
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px dashed var(--border-strong);
+  font-size: 14px; color: var(--muted); text-align: center; font-style: italic;
+}
+@media (max-width: 720px) { .md-demo-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+
+<body>
+<div class="progress" id="progress"></div>
+
+<!-- shared arrow markers -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--dgm-arrow)"/>
+    </marker>
+    <symbol id="flag-it" viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice">
+      <rect width="3" height="2" fill="#f4f4f2"/>
+      <rect width="1" height="2" fill="#009246"/>
+      <rect x="2" width="1" height="2" fill="#ce2b37"/>
+    </symbol>
+    <symbol id="flag-gb" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice">
+      <rect width="60" height="30" fill="#012169"/>
+      <g stroke="#fff" stroke-width="6"><path d="M0,0 60,30"/><path d="M60,0 0,30"/></g>
+      <g stroke="#c8102e" stroke-width="2.4"><path d="M0,0 60,30"/><path d="M60,0 0,30"/></g>
+      <rect x="25" width="10" height="30" fill="#fff"/>
+      <rect y="10" width="60" height="10" fill="#fff"/>
+      <rect x="27" width="6" height="30" fill="#c8102e"/>
+      <rect y="12" width="60" height="6" fill="#c8102e"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============================ TOP BAR ============================ -->
+<header class="topbar">
+  <button class="toolbtn" id="menuBtn" aria-label="Apri indice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="brand">
+    <span class="glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
+        <path d="M6 15V9l3 3 3-3v6"/>
+        <path d="M16.7 9v4.8M14.5 11.6l2.2 2.2 2.2-2.2"/>
+      </svg>
+    </span>
+    <span class="title">
+      <b>Markdown, da zero</b>
+      <span>Scrivere in testo semplice &middot; per chi parte oggi</span>
+    </span>
+  </div>
+  <button class="toolbtn" id="themeBtn" aria-label="Cambia tema" title="Tema: automatico">
+    <svg class="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <svg class="i-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+    <svg class="i-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8z"/></svg>
+    <span class="lbl" id="themeLbl">auto</span>
+  </button>
+  <div class="langwrap" id="langwrap">
+    <button class="toolbtn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" title="Lingua">
+      <svg class="flag" aria-hidden="true"><use href="#flag-it"/></svg>
+      <span class="lbl" id="langLbl">IT</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <ul class="langmenu" id="langMenu" role="listbox" aria-label="Lingua / Language">
+      <li role="option" data-lang="it" tabindex="0" aria-selected="true"><svg class="flag" aria-hidden="true"><use href="#flag-it"/></svg><span>Italiano</span></li>
+      <li role="option" data-lang="en" tabindex="0" aria-selected="false"><svg class="flag" aria-hidden="true"><use href="#flag-gb"/></svg><span>English</span></li>
+    </ul>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- ============================ LAYOUT ============================ -->
+<div class="layout">
+
+  <!-- ---------------- SIDEBAR ---------------- -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="toc-wrap" aria-label="Indice dei contenuti">
+      <div class="toc-kicker">Indice</div>
+      <ul class="toc" id="toc">
+        <li><a href="#intro"><span class="num">01</span><span>Cos'è Markdown</span></a></li>
+        <li><a href="#come-funziona"><span class="num">02</span><span>Come funziona: sorgente e resa</span></a></li>
+        <li><a href="#basi"><span class="num">03</span><span>Le basi: titoli ed enfasi</span></a></li>
+        <li><a href="#liste"><span class="num">04</span><span>Liste, citazioni, righe</span></a></li>
+        <li><a href="#link-immagini"><span class="num">05</span><span>Link e immagini</span></a></li>
+        <li><a href="#codice"><span class="num">06</span><span>Codice</span></a></li>
+        <li><a href="#tabelle"><span class="num">07</span><span>Tabelle</span></a></li>
+        <li><a href="#gfm"><span class="num">08</span><span>Oltre le basi: GFM</span></a></li>
+        <li><a href="#convertire"><span class="num">09</span><span>Convertire e pubblicare</span></a></li>
+        <li><a href="#cheatsheet"><span class="num">10</span><span>Cheatsheet</span></a></li>
+        <li><a href="#riferimenti"><span class="num">11</span><span>Riferimenti</span></a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ---------------- MAIN ---------------- -->
+  <main>
+    <article class="article">
+      <!-- HERO -->
+      <div class="hero">
+        <span class="eyebrow">Guida introduttiva</span>
+        <h1>Markdown, scrivere <em>senza</em> distrazioni.</h1>
+        <p class="lead">Markdown è un modo per scrivere documenti formattati usando solo testo semplice: pochi simboli, leggibili a occhio nudo, che diventano titoli, grassetti, elenchi e tabelle. Niente menu, niente mouse, nessun software speciale. Questa guida ti porta dalle prime righe fino al codice, alle tabelle e alla conversione in PDF, un simbolo alla volta.</p>
+        <div class="meta">
+          <span class="chip">Solo <b>testo</b>, zero lock-in</span>
+          <span class="chip">Dal <b># titolo</b> alla <b>tabella</b></span>
+          <span class="chip">Versionabile e <b>convertibile</b></span>
+        </div>
+      </div>
+
+      <!-- ===================== 01 INTRO ===================== -->
+      <section class="section reveal" id="intro">
+        <div class="sec-head"><span class="sec-num">01</span><h2>Cos'è Markdown, e perché</h2></div>
+        <div class="rule"></div>
+
+        <p><strong>Markdown</strong> è un <em>linguaggio di markup leggero</em>: un modo per descrivere la formattazione di un documento (titoli, grassetti, elenchi, link) scrivendo soltanto testo semplice e pochi simboli discreti. Lo ha ideato John Gruber nel 2004, con il contributo di Aaron Swartz, con un obiettivo dichiarato: la sorgente deve restare <em>leggibile a occhio nudo</em>, prima ancora di essere trasformata.</p>
+
+        <p>La differenza con un editor <strong>WYSIWYG</strong> (<em>What You See Is What You Get</em>, come Word o Google Docs) è netta. Lì la formattazione è nascosta dentro un formato complesso e dipende dal programma che l'ha creata; qui è scritta in chiaro, davanti ai tuoi occhi, e il file resta un comune file di testo.</p>
+
+        <figure class="diagram">
+          <svg class="dgm" viewBox="0 0 760 300" role="img" aria-label="Confronto: un documento WYSIWYG dipende dal programma che l'ha creato, mentre un file Markdown è solo testo e basta un editor qualsiasi.">
+            <text class="area-name" x="200" y="32">WYSIWYG</text>
+            <text class="area-name" x="560" y="32">Markdown</text>
+
+            <rect class="box" x="90" y="52" width="220" height="66" rx="12"/>
+            <text class="t" x="200" y="82" style="font-family:var(--font-body);font-weight:600;font-size:15px;">Documento .docx</text>
+            <text class="cap" x="200" y="102">.gdoc · .pages · binario</text>
+            <path class="edge" d="M200 118 L200 168" marker-end="url(#ah)"/>
+            <text class="cmd" x="214" y="147" style="text-anchor:start">richiede</text>
+            <rect class="box" x="90" y="168" width="220" height="66" rx="12"/>
+            <text class="t" x="200" y="198" style="font-family:var(--font-body);font-weight:600;font-size:15px;">Il programma giusto</text>
+            <text class="cap" x="200" y="218">che ha creato il file</text>
+
+            <rect class="work" x="450" y="52" width="220" height="66" rx="12"/>
+            <text class="t" x="560" y="82" style="font-family:var(--font-body);font-weight:600;font-size:15px;">File .md</text>
+            <text class="cap" x="560" y="102">solo testo · leggibile</text>
+            <path class="edge" d="M560 118 L560 168" marker-end="url(#ah)"/>
+            <text class="cmd" x="574" y="147" style="text-anchor:start">basta</text>
+            <rect class="stage" x="450" y="168" width="220" height="66" rx="12"/>
+            <text class="t" x="560" y="198" style="font-family:var(--font-body);font-weight:600;font-size:15px;">Qualsiasi editor</text>
+            <text class="cap" x="560" y="218">+ Git · AI · Pandoc</text>
+          </svg>
+          <figcaption>Lo stesso contenuto, due mondi. A sinistra dipendi dal programma che ha prodotto il file; a destra il file <em>è</em> il contenuto, lavorabile con qualunque strumento.</figcaption>
+        </figure>
+
+        <p>Da questa scelta, semplice quasi banale, discendono benefici molto concreti:</p>
+        <ul>
+          <li><strong>È solo testo.</strong> Un file Markdown è un file di testo come un altro: lo apri, lo leggi e lo modifichi ovunque, oggi e fra vent'anni, senza dipendere da nessun programma in particolare.</li>
+          <li><strong>File leggeri e portabili.</strong> Poche migliaia di byte, nessun formato binario: si copiano, si inviano per email, si incollano in una chat senza sorprese.</li>
+          <li><strong>Nessun software speciale.</strong> Basta un qualsiasi editor di testo. Niente licenze, niente installazioni, niente menu da imparare.</li>
+          <li><strong>Versionabile con Git.</strong> Essendo testo, Git ne segue le modifiche riga per riga: <em>diff</em> leggibili, cronologia chiara, niente file binari illeggibili nelle revisioni.</li>
+          <li><strong>Ti concentri sul contenuto.</strong> Non perdi tempo a impaginare: scrivi, e l'aspetto lo decide il renderer in un secondo momento, in modo coerente in tutto il documento.</li>
+          <li><strong>È il formato d'elezione per l'AI.</strong> I modelli linguistici leggono e producono Markdown in modo naturale: è il formato in cui ChatGPT, Claude e simili restituiscono testo strutturato.</li>
+          <li><strong>Si converte in tutto.</strong> Da un'unica sorgente ottieni HTML, PDF, Word, slide, ebook: scrivi una volta, pubblichi ovunque (vedi capitolo 09).</li>
+          <li><strong>È duraturo.</strong> Uno standard aperto e diffusissimo: nessun rischio di restare chiusi in un formato proprietario, un giorno abbandonato.</li>
+        </ul>
+
+        <div class="note tip">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span>
+          <div class="bd"><b>Markdown non è un programma</b><p>Markdown è una <em>convenzione</em> di scrittura, non un software. Qualsiasi editor di testo va bene per scriverlo; saranno altri strumenti (un sito, un editor con anteprima, un convertitore) a trasformarlo nella versione formattata. Lo vediamo nel prossimo capitolo.</p></div>
+        </div>
+
+        <a class="learn" href="https://daringfireball.net/projects/markdown/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          L'idea originale di John Gruber
+        </a>
+      </section>
+
+      <!-- ===================== 02 HOW IT WORKS ===================== -->
+      <section class="section reveal" id="come-funziona">
+        <div class="sec-head"><span class="sec-num">02</span><h2>Come funziona: sorgente e resa</h2></div>
+        <div class="rule"></div>
+
+        <p>Con Markdown lavori sempre su due piani. Da una parte la <strong>sorgente</strong>: il testo che scrivi tu, con i suoi simboli. Dall'altra la <strong>resa</strong> (<em>rendering</em>): il documento formattato che un programma genera a partire dalla sorgente. Tu tocchi solo la sorgente; la resa è il prodotto finito.</p>
+
+        <p>Il bello è che il simbolo che scrivi è sempre proporzionato al risultato. Un cancelletto fa un titolo, due asterischi fanno il grassetto: anche senza anteprima, la sorgente comunica già la struttura del documento. Da qui in avanti, ogni esempio mostra <strong>a sinistra ciò che scrivi e a destra ciò che ottieni</strong>.</p>
+
+        <figure class="diagram">
+          <svg class="dgm" viewBox="0 0 760 360" role="img" aria-label="Una sorgente Markdown passa per un renderer e diventa pagina web, PDF, documento Word o slide.">
+            <rect class="work" x="30" y="150" width="140" height="64" rx="12"/>
+            <text class="t" x="100" y="178" style="font-family:var(--font-body);font-weight:600;font-size:15px;">file .md</text>
+            <text class="cap" x="100" y="198">la sorgente</text>
+
+            <path class="edge" d="M170 182 L258 182" marker-end="url(#ah)"/>
+            <text class="cmd" x="214" y="171">scrivi</text>
+
+            <rect class="stage" x="258" y="150" width="200" height="64" rx="12"/>
+            <text class="t" x="358" y="178" style="font-family:var(--font-body);font-weight:600;font-size:15px;">renderer</text>
+            <text class="cap" x="358" y="198">sito · editor · Pandoc</text>
+
+            <path class="edge" d="M458 182 L493 182"/>
+            <line class="edge" x1="493" y1="82" x2="493" y2="304"/>
+            <path class="edge" d="M493 82 L533 82" marker-end="url(#ah)"/>
+            <path class="edge" d="M493 156 L533 156" marker-end="url(#ah)"/>
+            <path class="edge" d="M493 230 L533 230" marker-end="url(#ah)"/>
+            <path class="edge" d="M493 304 L533 304" marker-end="url(#ah)"/>
+
+            <rect class="repo" x="533" y="60" width="192" height="44" rx="10"/>
+            <text class="t" x="629" y="87" style="font-size:14px">Pagina web · HTML</text>
+            <rect class="repo" x="533" y="134" width="192" height="44" rx="10"/>
+            <text class="t" x="629" y="161" style="font-size:14px">PDF</text>
+            <rect class="repo" x="533" y="208" width="192" height="44" rx="10"/>
+            <text class="t" x="629" y="235" style="font-size:14px">Documento Word</text>
+            <rect class="repo" x="533" y="282" width="192" height="44" rx="10"/>
+            <text class="t" x="629" y="309" style="font-size:14px">Slide</text>
+          </svg>
+          <figcaption>Un'unica sorgente, molte rese. Lo stesso file <code class="inline">.md</code> diventa una pagina web, un PDF, un documento Word o delle slide, a seconda dello strumento che lo elabora.</figcaption>
+        </figure>
+
+        <h3>Dove si scrive il Markdown</h3>
+        <p>Ovunque. Un editor di testo qualsiasi è già sufficiente, ma molti strumenti mostrano la resa in tempo reale accanto alla sorgente, il che aiuta moltissimo all'inizio:</p>
+        <ul>
+          <li>Editor di codice come <strong>VS Code</strong> (con anteprima integrata), o editor dedicati come Obsidian, Typora, Zettlr.</li>
+          <li>Le piattaforme come GitHub, GitLab, Reddit, Discord o Stack Overflow: i file <code class="inline">.md</code> e i messaggi vengono resi automaticamente.</li>
+          <li>Editor online come StackEdit o Dillinger, senza installare nulla.</li>
+        </ul>
+
+        <div class="note">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg></span>
+          <div class="bd"><b>L'estensione <span class="h-mono">.md</span></b><p>Un file Markdown ha tipicamente estensione <code class="inline">.md</code> (o <code class="inline">.markdown</code>). È una convenzione utile agli strumenti per riconoscerlo e mostrarne l'anteprima, ma resta in tutto e per tutto un file di testo.</p></div>
+        </div>
+
+        <a class="learn" href="https://www.markdownguide.org/getting-started/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Per iniziare
+        </a>
+      </section>
+
+      <!-- ===================== 03 BASICS ===================== -->
+      <section class="section reveal" id="basi">
+        <div class="sec-head"><span class="sec-num">03</span><h2>Le basi: titoli, paragrafi, enfasi</h2></div>
+        <div class="rule"></div>
+
+        <p>I mattoni fondamentali sono tre: i <strong>titoli</strong> per dare struttura, i <strong>paragrafi</strong> per il testo corrente, l'<strong>enfasi</strong> per evidenziare. Bastano questi per scrivere il 90% di un documento.</p>
+
+        <h3>Titoli</h3>
+        <p>Un titolo si apre con uno o più cancelletti <code class="inline">#</code>, seguiti da uno spazio. Il numero di cancelletti indica il livello, da 1 (il più importante) fino a 6.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="titoli.md"># Titolo di primo livello
+## Sezione
+### Sottosezione</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p class="md-h1">Titolo di primo livello</p>
+                <p class="md-h2">Sezione</p>
+                <p class="md-h3">Sottosezione</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Paragrafi e a capo</h3>
+        <p>Per separare due paragrafi lascia una <strong>riga vuota</strong> tra loro. Andare a capo senza riga vuota, invece, non spezza il testo nella resa: le due righe diventano una sola.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="paragrafi.md">Questo è un paragrafo, scritto
+su due righe ma reso come una sola.
+
+Questo è un secondo paragrafo,
+separato dal primo da una riga vuota.</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p>Questo è un paragrafo, scritto su due righe ma reso come una sola.</p>
+                <p>Questo è un secondo paragrafo, separato dal primo da una riga vuota.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <p>Per forzare un'interruzione di riga restando nello stesso paragrafo, termina la riga con <strong>due spazi</strong>. Sono invisibili, quindi quando puoi è meglio usare una riga vuota e un nuovo paragrafo.</p>
+
+        <h3>Grassetto, corsivo e codice</h3>
+        <p>Racchiudi il testo fra simboli: <code class="inline">*</code> o <code class="inline">_</code> per il corsivo, doppi per il grassetto.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="enfasi.md">*corsivo* oppure _corsivo_
+**grassetto** oppure __grassetto__
+***grassetto e corsivo***</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p><em>corsivo</em> oppure <em>corsivo</em></p>
+                <p><strong>grassetto</strong> oppure <strong>grassetto</strong></p>
+                <p><strong><em>grassetto e corsivo</em></strong></p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <a class="learn" href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Sintassi di base
+        </a>
+      </section>
+
+      <!-- ===================== 04 LISTS ===================== -->
+      <section class="section reveal" id="liste">
+        <div class="sec-head"><span class="sec-num">04</span><h2>Liste, citazioni, righe</h2></div>
+        <div class="rule"></div>
+
+        <h3>Elenchi puntati</h3>
+        <p>Inizia ogni voce con un trattino <code class="inline">-</code> (vanno bene anche <code class="inline">*</code> o <code class="inline">+</code>) e uno spazio. Per annidare una voce, indentala di due spazi.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="elenco-puntato.md">- Primo elemento
+- Secondo elemento
+  - Sotto-elemento
+  - Un altro sotto-elemento
+- Terzo elemento</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <ul>
+                  <li>Primo elemento</li>
+                  <li>Secondo elemento
+                    <ul>
+                      <li>Sotto-elemento</li>
+                      <li>Un altro sotto-elemento</li>
+                    </ul>
+                  </li>
+                  <li>Terzo elemento</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Elenchi numerati</h3>
+        <p>Usa un numero seguito da un punto. Il numero di partenza conta, ma i successivi vengono rinumerati in automatico dal renderer: puoi anche scrivere sempre <code class="inline">1.</code> e lasciare che pensi lui all'ordine.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="elenco-numerato.md">1. Primo passo
+2. Secondo passo
+3. Terzo passo</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <ol>
+                  <li>Primo passo</li>
+                  <li>Secondo passo</li>
+                  <li>Terzo passo</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Citazioni</h3>
+        <p>Una citazione (<em>blockquote</em>) si apre con il segno di maggiore <code class="inline">&gt;</code>. Si possono annidare e contenere altri elementi.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="citazione.md">&gt; Questa è una citazione.
+&gt; Continua sulla riga successiva.
+&gt;
+&gt; &gt; E questa è annidata.</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <blockquote>
+                  <p>Questa è una citazione. Continua sulla riga successiva.</p>
+                  <blockquote><p>E questa è annidata.</p></blockquote>
+                </blockquote>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Righe orizzontali</h3>
+        <p>Tre o più trattini <code class="inline">---</code> (oppure asterischi) su una riga a sé creano una linea di separazione.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="riga.md">Sopra la linea.
+
+---
+
+Sotto la linea.</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p>Sopra la linea.</p>
+                <hr>
+                <p>Sotto la linea.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <div class="note warn">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+          <div class="bd"><b>Le righe vuote contano</b><p>Molti renderer riconoscono liste, citazioni e righe orizzontali solo se le fai precedere da una riga vuota. Nel dubbio, lascia respirare i blocchi con una riga vuota prima e dopo: è anche più leggibile.</p></div>
+        </div>
+
+        <a class="learn" href="https://www.markdownguide.org/basic-syntax/#lists-1" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Liste e citazioni
+        </a>
+      </section>
+
+      <!-- ===================== 05 LINKS & IMAGES ===================== -->
+      <section class="section reveal" id="link-immagini">
+        <div class="sec-head"><span class="sec-num">05</span><h2>Link e immagini</h2></div>
+        <div class="rule"></div>
+
+        <p>Link e immagini condividono quasi la stessa sintassi: un'immagine è semplicemente un link con un punto esclamativo davanti.</p>
+
+        <h3>Link</h3>
+        <p>Fra parentesi quadre il testo visibile, fra parentesi tonde l'indirizzo.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="link.md">[Markdown Guide](https://www.markdownguide.org)
+
+Con un titolo: [home](https://example.com "Pagina iniziale")
+
+Un indirizzo nudo: &lt;https://example.com&gt;</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p><a href="https://www.markdownguide.org" target="_blank" rel="noopener">Markdown Guide</a></p>
+                <p>Con un titolo: <a href="https://example.com" title="Pagina iniziale" target="_blank" rel="noopener">home</a></p>
+                <p>Un indirizzo nudo: <a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></p>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <p>Per non appesantire il testo, puoi separare l'indirizzo e richiamarlo con un'etichetta, di solito in fondo al documento:</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="link-riferimento.md">Leggi la [documentazione][doc] per i dettagli.
+
+[doc]: https://www.markdownguide.org/basic-syntax/</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p>Leggi la <a href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener">documentazione</a> per i dettagli.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Immagini</h3>
+        <p>Stessa sintassi, preceduta da <code class="inline">!</code>. Il testo fra quadre è il testo alternativo (<em>alt</em>): importante per l'accessibilità e per quando l'immagine non si carica.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="immagine.md">![Logo del progetto](immagini/logo.png)
+
+![Diagramma](diagramma.svg "Architettura")</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <div><svg class="md-img" viewBox="0 0 240 140" role="img" aria-label="Logo del progetto"><rect x="1" y="1" width="238" height="138" rx="10" fill="var(--surface-2)" stroke="var(--border-strong)"/><circle cx="62" cy="50" r="17" fill="var(--amber)"/><path d="M12 124 L86 68 L132 104 L178 60 L228 124 Z" fill="var(--teal)" opacity=".5"/><path d="M12 124 L120 92 L228 124 Z" fill="var(--accent)" opacity=".5"/></svg></div>
+                <div><svg class="md-img" viewBox="0 0 240 110" role="img" aria-label="Diagramma"><rect x="1" y="1" width="238" height="108" rx="10" fill="var(--surface-2)" stroke="var(--border-strong)"/><rect x="26" y="42" width="58" height="28" rx="6" fill="none" stroke="var(--teal)" stroke-width="2"/><rect x="156" y="42" width="58" height="28" rx="6" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M84 56 L156 56" stroke="var(--dgm-arrow)" stroke-width="2" marker-end="url(#ah)"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <div class="note">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/></svg></span>
+          <div class="bd"><b>Percorsi relativi</b><p>Negli indirizzi puoi usare percorsi relativi al file (<code class="inline">immagini/logo.png</code>) oppure URL assoluti. I percorsi relativi rendono il documento autosufficiente e facile da spostare insieme alle sue risorse.</p></div>
+        </div>
+
+        <a class="learn" href="https://www.markdownguide.org/basic-syntax/#links" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Link e immagini
+        </a>
+      </section>
+
+      <!-- ===================== 06 CODE ===================== -->
+      <section class="section reveal" id="codice">
+        <div class="sec-head"><span class="sec-num">06</span><h2>Codice: in linea e a blocchi</h2></div>
+        <div class="rule"></div>
+
+        <p>Mostrare codice o comandi senza che vengano interpretati è uno dei punti forti di Markdown, ed è il motivo per cui lo usano tanto i programmatori.</p>
+
+        <h3>Codice in linea</h3>
+        <p>Racchiudi un frammento fra <em>backtick</em> singoli per renderlo a larghezza fissa, dentro una frase.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="codice-in-linea.md">Esegui `git status` per vedere lo stato.</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p>Esegui <code>git status</code> per vedere lo stato.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <p>Se il frammento contiene a sua volta un backtick, racchiudilo fra backtick doppi.</p>
+
+        <h3>Blocchi di codice</h3>
+        <p>Per un blocco intero, recintalo (<em>fenced</em>) fra tre backtick. Indicando il linguaggio subito dopo i primi tre, molti renderer applicano la colorazione della sintassi.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="blocco-codice.md">```python
+def area(r):
+    return 3.14 * r * r
+```</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <pre class="md-cb">def area(r):
+    return 3.14 * r * r</pre>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <div class="note tip">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span>
+          <div class="bd"><b>Dov'è il backtick?</b><p>Il backtick (<code class="inline">`</code>) è un carattere chiave in Markdown, ma sulle tastiere italiane non ha un tasto dedicato. Su macOS si ottiene con <code class="inline">⌥</code> + <code class="inline">9</code>; vale la pena imparare la scorciatoia del proprio sistema.</p></div>
+        </div>
+
+        <a class="learn" href="https://www.markdownguide.org/extended-syntax/#fenced-code-blocks" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Blocchi di codice
+        </a>
+      </section>
+
+      <!-- ===================== 07 TABLES ===================== -->
+      <section class="section reveal" id="tabelle">
+        <div class="sec-head"><span class="sec-num">07</span><h2>Tabelle</h2></div>
+        <div class="rule"></div>
+
+        <p>Le tabelle non fanno parte del Markdown originale, ma sono ormai uno standard di fatto, introdotto da GitHub. Si disegnano con le barre verticali <code class="inline">|</code> e una riga di trattini che separa l'intestazione dal contenuto.</p>
+
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="tabella.md">| Comando      | Cosa fa            |
+| ------------ | ------------------ |
+| `git status` | mostra lo stato    |
+| `git add`    | prepara il commit  |</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <table>
+                  <thead><tr><th>Comando</th><th>Cosa fa</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>git status</code></td><td>mostra lo stato</td></tr>
+                    <tr><td><code>git add</code></td><td>prepara il commit</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <p>I due punti nella riga di separazione controllano l'allineamento della colonna: a sinistra, al centro o a destra.</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="allineamento.md">| Sinistra | Centro | Destra |
+| :------- | :----: | -----: |
+| testo    | testo  | testo  |</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <table>
+                  <thead><tr><th style="text-align:left">Sinistra</th><th style="text-align:center">Centro</th><th style="text-align:right">Destra</th></tr></thead>
+                  <tbody><tr><td style="text-align:left">testo</td><td style="text-align:center">testo</td><td style="text-align:right">testo</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <p>Non serve che le barre siano perfettamente allineate nella sorgente: puoi scriverle "storte" e il renderer le sistema comunque. Allinearle, però, rende la sorgente molto più leggibile.</p>
+
+        <div class="note tip">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span>
+          <div class="bd"><b>Generatori di tabelle</b><p>Scrivere tabelle a mano è noioso. Molti editor e siti (come Tables Generator, o l'editor di tabelle integrato in VS Code) le costruiscono visivamente e producono il Markdown pronto da incollare.</p></div>
+        </div>
+
+        <a class="learn" href="https://www.markdownguide.org/extended-syntax/#tables" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Tabelle
+        </a>
+      </section>
+
+      <!-- ===================== 08 GFM ===================== -->
+      <section class="section reveal" id="gfm">
+        <div class="sec-head"><span class="sec-num">08</span><h2>Oltre le basi: GitHub Flavored Markdown</h2></div>
+        <div class="rule"></div>
+
+        <p>Il Markdown originale di Gruber è volutamente minimale. Negli anni sono nate <strong>varianti</strong> che aggiungono funzioni utili. La più diffusa è <strong>GitHub Flavored Markdown</strong> (GFM), che hai già incontrato con le tabelle.</p>
+
+        <p>Due nomi ricorrono spesso, ed è bene sapere cosa indicano:</p>
+        <ul>
+          <li><strong>CommonMark</strong>: una specifica rigorosa che mette ordine nelle ambiguità del Markdown originale. È la base su cui si appoggiano quasi tutti i renderer moderni.</li>
+          <li><strong>GitHub Flavored Markdown (GFM)</strong>: CommonMark più le estensioni di GitHub, cioè tabelle, caselle di spunta, testo barrato e riconoscimento automatico dei link.</li>
+        </ul>
+
+        <h3>Caselle di spunta (task list)</h3>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="task-list.md">- [x] Scrivere la bozza
+- [x] Rileggere
+- [ ] Pubblicare</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <ul class="tasks">
+                  <li><input type="checkbox" checked disabled> Scrivere la bozza</li>
+                  <li><input type="checkbox" checked disabled> Rileggere</li>
+                  <li><input type="checkbox" disabled> Pubblicare</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Testo barrato</h3>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="barrato.md">Il prezzo è ~~100€~~ 80€.</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p>Il prezzo è <del>100€</del> 80€.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <h3>Note a piè di pagina</h3>
+        <p>Alcune varianti (fra cui GFM e Pandoc) supportano le note, con un riferimento nel testo e il contenuto altrove:</p>
+        <figure class="md-demo">
+          <div class="md-demo-grid">
+            <pre class="code-src" data-name="note.md">Questa frase ha una fonte.[^1]
+
+[^1]: I dettagli della fonte.</pre>
+            <div class="md-render">
+              <p class="rh">&#8627; risultato reso</p>
+              <div class="rb">
+                <p>Questa frase ha una fonte.<sup class="fnref">1</sup></p>
+                <hr>
+                <p class="fn"><sup>1.</sup> I dettagli della fonte.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <div class="note warn">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+          <div class="bd"><b>Non tutto è universale</b><p>Prima di affidarti a un'estensione, verifica che lo strumento di destinazione la supporti. Tabelle, barrato e caselle di spunta sono ormai diffusissimi; le note a piè di pagina e le formule matematiche, invece, dipendono dal renderer. Nel dubbio, attieniti a CommonMark.</p></div>
+        </div>
+
+        <a class="learn" href="https://github.github.com/gfm/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          La specifica di GitHub Flavored Markdown
+        </a>
+      </section>
+
+      <!-- ===================== 09 CONVERT ===================== -->
+      <section class="section reveal" id="convertire">
+        <div class="sec-head"><span class="sec-num">09</span><h2>Convertire e pubblicare</h2></div>
+        <div class="rule"></div>
+
+        <p>Qui Markdown dà il meglio: da un'unica sorgente generi quasi qualsiasi formato. Lo strumento principe è <strong>Pandoc</strong>, un convertitore universale di documenti.</p>
+
+        <h3>Pandoc: il coltellino svizzero</h3>
+        <p>Una volta installato Pandoc, una sola riga trasforma il tuo <code class="inline">.md</code> nel formato che ti serve.</p>
+        <pre class="code-src" data-sh data-name="terminale"># da Markdown a PDF
+pandoc documento.md -o documento.pdf
+
+# da Markdown a Word
+pandoc documento.md -o documento.docx
+
+# da Markdown a una pagina HTML autosufficiente
+pandoc documento.md -s -o documento.html</pre>
+        <p>Pandoc legge e scrive decine di formati: oltre a PDF, Word e HTML anche slide (reveal.js, PowerPoint), ebook (EPUB), LaTeX e molti altri.</p>
+
+        <h3>Siti e documentazione</h3>
+        <p>Per pubblicare online intere raccolte di pagine Markdown esistono i generatori di <em>siti statici</em>:</p>
+        <ul>
+          <li><strong>MkDocs</strong> e <strong>Material for MkDocs</strong>: documentazione tecnica, pronta in pochi minuti.</li>
+          <li><strong>Docusaurus</strong>, <strong>Hugo</strong> e <strong>Jekyll</strong> (quest'ultimo dietro a GitHub Pages): siti e blog.</li>
+          <li><strong>Slidev</strong> e <strong>Marp</strong>: presentazioni scritte interamente in Markdown.</li>
+        </ul>
+
+        <h3>Già pronto su GitHub</h3>
+        <p>Spesso non serve nemmeno convertire: GitHub, GitLab e simili rendono automaticamente i file <code class="inline">.md</code>. Un file <code class="inline">README.md</code> nella radice di un repository diventa la pagina di presentazione del progetto.</p>
+
+        <div class="note tip">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span>
+          <div class="bd"><b>Scrivi una volta, pubblica ovunque</b><p>È il vantaggio che ripaga tutto: la stessa sorgente diventa la pagina del progetto su GitHub, il PDF da allegare a un'email e le slide della presentazione, senza riscrivere niente.</p></div>
+        </div>
+
+        <a class="learn" href="https://pandoc.org" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Pandoc · Il convertitore universale
+        </a>
+      </section>
+
+      <!-- ===================== 10 CHEATSHEET ===================== -->
+      <section class="section reveal" id="cheatsheet">
+        <div class="sec-head"><span class="sec-num">10</span><h2>Cheatsheet: la sintassi in breve</h2></div>
+        <div class="rule"></div>
+
+        <p>Tutto il Markdown che ti serve ogni giorno, su due tabelle. Tienile a portata di mano finché i simboli non ti vengono naturali.</p>
+
+        <h3>Sintassi di base</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Elemento</th><th>Si scrive così</th></tr></thead>
+            <tbody>
+              <tr><td>Titolo (livelli 1–6)</td><td><code># Titolo</code> … <code>###### Titolo</code></td></tr>
+              <tr><td>Grassetto</td><td><code>**testo**</code></td></tr>
+              <tr><td>Corsivo</td><td><code>*testo*</code></td></tr>
+              <tr><td>Codice in linea</td><td><code>`codice`</code></td></tr>
+              <tr><td>Link</td><td><code>[testo](indirizzo)</code></td></tr>
+              <tr><td>Immagine</td><td><code>![alt](percorso)</code></td></tr>
+              <tr><td>Elenco puntato</td><td><code>- voce</code></td></tr>
+              <tr><td>Elenco numerato</td><td><code>1. voce</code></td></tr>
+              <tr><td>Citazione</td><td><code>&gt; testo</code></td></tr>
+              <tr><td>Riga orizzontale</td><td><code>---</code></td></tr>
+              <tr><td>Blocco di codice</td><td><code>```linguaggio … ```</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Sintassi estesa (GitHub)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Elemento</th><th>Si scrive così</th></tr></thead>
+            <tbody>
+              <tr><td>Tabella</td><td><code>| A | B |</code> e poi <code>| --- | --- |</code></td></tr>
+              <tr><td>Testo barrato</td><td><code>~~testo~~</code></td></tr>
+              <tr><td>Casella di spunta</td><td><code>- [ ] da fare</code> · <code>- [x] fatto</code></td></tr>
+              <tr><td>Nota a piè di pagina</td><td><code>testo[^1]</code> e <code>[^1]: nota</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <a class="learn" href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg>
+          Markdown Guide · Cheat sheet completo
+        </a>
+      </section>
+
+      <!-- ===================== 11 REFERENCES ===================== -->
+      <section class="section reveal" id="riferimenti">
+        <div class="sec-head"><span class="sec-num">11</span><h2>Riferimenti</h2></div>
+        <div class="rule"></div>
+
+        <p>Le fonti per andare oltre. La <em>Markdown Guide</em> e la specifica <em>CommonMark</em> sono i riferimenti da tenere a portata di mano.</p>
+
+        <div class="refs">
+          <div class="refcard">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 3v18"/></svg> Imparare il Markdown</h4>
+            <ul>
+              <li><a href="https://www.markdownguide.org" target="_blank" rel="noopener">markdownguide.org</a><span class="d">La guida di riferimento, in inglese</span></li>
+              <li><a href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener">Sintassi di base</a><span class="d">I mattoni essenziali</span></li>
+              <li><a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noopener">Cheat sheet</a><span class="d">Riepilogo su una pagina</span></li>
+              <li><a href="https://www.markdownguide.org/extended-syntax/" target="_blank" rel="noopener">Sintassi estesa</a><span class="d">Tabelle, codice, note</span></li>
+            </ul>
+          </div>
+
+          <div class="refcard">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 13h6M9 17h5"/></svg> Specifiche e varianti</h4>
+            <ul>
+              <li><a href="https://commonmark.org" target="_blank" rel="noopener">CommonMark</a><span class="d">La specifica di riferimento</span></li>
+              <li><a href="https://commonmark.org/help/" target="_blank" rel="noopener">Tutorial CommonMark</a><span class="d">Si impara in dieci minuti</span></li>
+              <li><a href="https://github.github.com/gfm/" target="_blank" rel="noopener">GitHub Flavored Markdown</a><span class="d">La variante di GitHub</span></li>
+              <li><a href="https://daringfireball.net/projects/markdown/syntax" target="_blank" rel="noopener">Daring Fireball</a><span class="d">La sintassi originale di Gruber</span></li>
+            </ul>
+          </div>
+
+          <div class="refcard">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg> Strumenti</h4>
+            <ul>
+              <li><a href="https://pandoc.org" target="_blank" rel="noopener">Pandoc</a><span class="d">Conversione universale di documenti</span></li>
+              <li><a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">Material for MkDocs</a><span class="d">Siti di documentazione</span></li>
+              <li><a href="https://stackedit.io" target="_blank" rel="noopener">StackEdit</a><span class="d">Editor Markdown nel browser</span></li>
+              <li><a href="https://babelmark.github.io" target="_blank" rel="noopener">Babelmark 3</a><span class="d">Confronta i vari renderer</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="foot">
+          <p>Guida introduttiva al Markdown, indipendente dal sistema operativo. Gli esempi sono pensati per imparare: provali in un editor con anteprima per vederne subito la resa.</p>
+          <p>Guida gemella: <a href="git.html">Git, da zero</a>, lo strumento ideale per versionare i tuoi file Markdown.</p>
+          <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener" aria-label="CC BY-NC-SA 4.0">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.957,0.311c-8.682,0-16.322,3.213-22.226,9.203C3.653,15.678,0.354,23.666,0.354,32c0,8.422,3.212,16.236,9.29,22.313c6.078,6.078,13.978,9.377,22.313,9.377c8.334,0,16.409-3.299,22.66-9.463c5.904-5.817,9.029-13.544,9.029-22.227c0-8.595-3.125-16.408-9.116-22.399C48.453,3.523,40.639,0.311,31.957,0.311z M32.043,6.041c7.12,0,13.458,2.691,18.406,7.641c4.862,4.861,7.466,11.286,7.466,18.318c0,7.119-2.518,13.371-7.379,18.146c-5.123,5.035-11.721,7.727-18.493,7.727c-6.858,0-13.283-2.691-18.232-7.641C8.862,45.283,6.084,38.772,6.084,32c0-6.858,2.778-13.369,7.727-18.406C18.673,8.646,24.924,6.041,32.043,6.041z"/><path id="cc-c" d="M31.635,26.734c-1.79-3.264-4.844-4.563-8.389-4.563c-5.16,0-9.267,3.65-9.267,9.828c0,6.283,3.861,9.829,9.442,9.829c3.581,0,6.635-1.966,8.319-4.949l-3.931-2.001c-0.878,2.105-2.212,2.738-3.896,2.738c-2.914,0-4.248-2.422-4.248-5.617c0-3.193,1.124-5.616,4.248-5.616c0.842,0,2.527,0.456,3.51,2.563L31.635,26.734z"/><use xlink:href="#cc-c" href="#cc-c" transform="translate(18.281)"/></svg>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.1875,0C13.90625,0.4375,0,14.613281,0,32C0,49.664063,14.335938,64,32,64C49.664063,64,64,49.664063,64,32C64,14.335938,49.664063,0,32,0C31.722656,0,31.460938-0.0078125,31.1875,0z M31.15625,5.5C31.441406,5.492188,31.714844,5.5,32,5.5C46.628906,5.5,58.5,17.371094,58.5,32C58.5,46.628906,46.628906,58.5,32,58.5C17.371094,58.5,5.5,46.628906,5.5,32C5.5,17.65625,16.921875,5.953125,31.15625,5.5z"/><path d="M36.625,15.9375C36.625,18.488281,34.554688,20.5625,32,20.5625C29.445313,20.5625,27.375,18.488281,27.375,15.9375C27.375,13.382813,29.445313,11.3125,32,11.3125C34.554688,11.3125,36.625,13.382813,36.625,15.9375z"/><path d="M27.214844,52.6875L36.785156,52.6875L36.785156,37.3125L39.679688,37.3125C39.679688,37.3125,39.675781,26.320313,39.679688,24.589844C39.675781,24.132813,39.71875,23.226563,39.058594,22.5625C38.394531,21.902344,37.5,21.941406,37.03125,21.941406C36.558594,21.945313,27.441406,21.945313,26.96875,21.941406C26.5,21.941406,25.605469,21.902344,24.941406,22.5625C24.28125,23.226563,24.324219,24.132813,24.320313,24.589844C24.324219,26.320313,24.320313,37.3125,24.320313,37.3125L27.214844,37.3125z"/></svg>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.1875,0C13.90625,0.4375,0,14.613281,0,32C0,49.664063,14.335938,64,32,64C49.664063,64,64,49.664063,64,32C64,14.335938,49.664063,0,32,0C31.722656,0,31.460938-0.0078125,31.1875,0z M31.15625,5.5C31.441406,5.492188,31.714844,5.5,32,5.5C46.628906,5.5,58.5,17.371094,58.5,32C58.5,46.628906,46.628906,58.5,32,58.5C17.371094,58.5,5.5,46.628906,5.5,32C5.5,17.65625,16.921875,5.953125,31.15625,5.5z"/><path d="M25.644531,38.742188C27.707031,41.625,33.996094,41.832031,36.15625,40.613281C36.949219,40.164063,37.144531,38.863281,37.144531,37.984375C37.144531,37.378906,36.988281,36.90625,36.667969,36.558594C36.332031,36.214844,35.480469,35.339844,34.492188,35.082031C29.472656,33.785156,26,32.167969,24.636719,30.996094C22.941406,29.527344,22.667969,28.570313,22.667969,26.015625C22.667969,23.460938,23.402344,21.320313,25.0625,19.785156C26.722656,18.25,29.136719,17.480469,32.296875,17.480469C35.316406,17.480469,39.566406,18.277344,41.636719,20.738281L38.183594,24.492188C36.234375,22.859375,34.789063,22.710938,32.402344,22.710938C30.902344,22.710938,30.121094,22.925781,29.484375,23.359375C28.847656,23.773438,28.53125,24.316406,28.53125,24.988281C28.53125,25.59375,28.820313,26.09375,29.40625,26.488281C29.988281,26.90625,31.511719,27.527344,34.550781,28.355469C37.957031,29.285156,40.273438,30.417969,41.492188,31.746094C42.691406,33.074219,43.292969,34.84375,43.292969,37.050781C43.292969,39.710938,42.355469,41.902344,40.484375,43.628906C38.628906,45.355469,36.347656,46.695313,33.0625,46.695313C28.832031,46.695313,23.1875,45.199219,21.628906,42.441406z"/><path d="M59.34375,40.105469L56.9375,45.386719L5.816406,22.351563L8.222656,17.070313z"/><path d="M30.375,12.875L30.375,19.71875L33.625,19.71875L33.625,12.875z M30.375,44.96875L30.375,51.125L33.625,51.125L33.625,44.96875z"/></svg>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.1875,0C13.904525,0.43835438,0,14.612004,0,32C0,49.663996,14.336004,64,32,64C49.663996,64,64,49.663996,64,32C64,14.336004,49.663996,0,32,0C31.724,0,31.461833-0.006958,31.1875,0z M31.15625,5.5C31.439783,5.4910103,31.714297,5.5,32,5.5C46.628003,5.5,58.5,17.371998,58.5,32C58.499998,46.628001,46.628002,58.5,32,58.5C17.371999,58.499999,5.5,46.628002,5.5,32C5.4999999,17.657701,16.922915,5.9512829,31.15625,5.5z"/><path d="M18.115779,26.784547L15.375001,26.784547L21.593751,33.753297L27.812501,26.784547L25.568649,26.784547C26.054748,23.384747,29.04552,21.198122,32.500001,21.472047C32.636557,21.482875,32.767855,21.472047,32.906251,21.472047C38.533681,21.472047,40.753071,25.727912,40.937501,32.003297C41.129971,38.552496,37.334011,42.623673,32.906251,42.534547C28.232865,42.442333,26.462202,40.207037,25.781251,36.815797L17.437501,36.815797C18.810678,44.627028,24.561356,49.207833,32.718751,49.222047C41.953331,49.238298,48.624999,41.5127,48.624999,32.003297C48.624999,21.848404,41.955631,14.784547,32.718751,14.784547C32.444507,14.784547,32.177099,14.769654,31.906251,14.784547C31.840655,14.788154,31.784281,14.783475,31.718751,14.784547C25.946542,14.880519,18.115822,18.924289,18.115779,26.784547z"/></svg>
+          </a>
+          <p class="license-note">Questa guida è distribuita con licenza <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener">Creative Commons Attribuzione - Non commerciale - Condividi allo stesso modo 4.0 Internazionale (CC BY-NC-SA 4.0)</a>.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+</div>
+
+<!-- ============================ SCRIPTS ============================ -->
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var body = document.body;
+  var themeBtn = document.getElementById('themeBtn');
+  var themeLbl = document.getElementById('themeLbl');
+  var menuBtn = document.getElementById('menuBtn');
+
+  /* ============ i18n ============ */
+  var UI = {
+    it: { copy: 'copia', copied: 'fatto', terminal: 'terminale', themeAuto: 'auto', themeLight: 'chiaro', themeDark: 'scuro', themeTitle: 'Tema', langTitle: 'Lingua', menu: 'Apri indice', tocKicker: 'Indice' },
+    en: { copy: 'copy', copied: 'done', terminal: 'terminal', themeAuto: 'auto', themeLight: 'light', themeDark: 'dark', themeTitle: 'Theme', langTitle: 'Language', menu: 'Open contents', tocKicker: 'Contents' }
+  };
+
+  /* English content dictionary, parallel to the Italian DOM (document order). */
+  var EN_DICT = {"content":["Getting started","Markdown: writing <em>without</em> distractions.","Markdown is a way to write formatted documents using only plain text: a few symbols, readable with the naked eye, that turn into headings, bold, lists and tables. No menus, no mouse, no special software. This guide takes you from your first lines all the way to code, tables and converting to PDF, one symbol at a time.","Just <b>text</b>, zero lock-in","From <b># heading</b> to <b>table</b>","Versionable and <b>convertible</b>","What Markdown is, and why","<strong>Markdown</strong> is a <em>lightweight markup language</em>: a way to describe a document's formatting (headings, bold, lists, links) by writing only plain text and a few discreet symbols. John Gruber designed it in 2004, with input from Aaron Swartz, with a stated goal: the source must stay <em>readable with the naked eye</em>, before it is ever transformed.","The difference with a <strong>WYSIWYG</strong> editor (<em>What You See Is What You Get</em>, like Word or Google Docs) is stark. There the formatting is hidden inside a complex format and depends on the program that created it; here it is written in plain sight, before your eyes, and the file stays an ordinary text file.","The same content, two worlds. On the left you depend on the program that produced the file; on the right the file <em>is</em> the content, workable with any tool.","From this choice, almost trivially simple, very concrete benefits follow:","<strong>It is just text.</strong> A Markdown file is a text file like any other: you open it, read it and edit it anywhere, today and twenty years from now, without depending on any particular program.","<strong>Light and portable files.</strong> A few thousand bytes, no binary format: they copy, email and paste into a chat without surprises.","<strong>No special software.</strong> Any text editor will do. No licenses, no installations, no menus to learn.","<strong>Versionable with Git.</strong> Being text, Git tracks its changes line by line: readable <em>diffs</em>, a clear history, no unreadable binary files in the revisions.","<strong>You focus on the content.</strong> You don't waste time laying things out: you write, and the look is decided later by the renderer, consistently across the whole document.","<strong>It is the format of choice for AI.</strong> Language models read and produce Markdown naturally: it is the format in which ChatGPT, Claude and the like return structured text.","<strong>It converts into anything.</strong> From a single source you get HTML, PDF, Word, slides, ebooks: write once, publish anywhere (see chapter 09).","<strong>It is long-lasting.</strong> An open and hugely widespread standard: no risk of being locked into a proprietary format that is one day abandoned.","Markdown is not a program","Markdown is a writing <em>convention</em>, not a piece of software. Any text editor is fine to write it; it will be other tools (a website, an editor with a preview, a converter) that turn it into the formatted version. We will see this in the next chapter.","How it works: source and render","With Markdown you always work on two planes. On one side the <strong>source</strong>: the text you write, with its symbols. On the other the <strong>render</strong> (<em>rendering</em>): the formatted document a program generates from the source. You only touch the source; the render is the finished product.","The nice part is that the symbol you write is always proportional to the result. A hash makes a heading, two asterisks make bold: even without a preview, the source already conveys the structure of the document. From here on, every example shows <strong>what you write on the left and what you get on the right</strong>.","One source, many renders. The same <code class=\"inline\">.md</code> file becomes a web page, a PDF, a Word document or slides, depending on the tool that processes it.","Where you write Markdown","Anywhere. Any text editor is already enough, but many tools show the render in real time next to the source, which helps a lot at the start:","Code editors like <strong>VS Code</strong> (with a built-in preview), or dedicated editors like Obsidian, Typora, Zettlr.","Platforms like GitHub, GitLab, Reddit, Discord or Stack Overflow: <code class=\"inline\">.md</code> files and messages are rendered automatically.","Online editors like StackEdit or Dillinger, without installing anything.","The <span class=\"h-mono\">.md</span> extension","A Markdown file typically has the extension <code class=\"inline\">.md</code> (or <code class=\"inline\">.markdown</code>). It is a useful convention for tools to recognize it and show its preview, but it remains a text file through and through.","The basics: headings, paragraphs, emphasis","There are three fundamental building blocks: <strong>headings</strong> to give structure, <strong>paragraphs</strong> for running text, <strong>emphasis</strong> to highlight. These are enough to write 90% of a document.","Headings","A heading opens with one or more hash signs <code class=\"inline\">#</code>, followed by a space. The number of hashes sets the level, from 1 (the most important) down to 6.","↳ rendered result","Top-level heading","Section","Subsection","Paragraphs and line breaks","To separate two paragraphs, leave a <strong>blank line</strong> between them. Going to a new line without a blank line, on the other hand, does not break the text in the render: the two lines become one.","↳ rendered result","This is a paragraph, written on two lines but rendered as one.","This is a second paragraph, separated from the first by a blank line.","To force a line break while staying in the same paragraph, end the line with <strong>two spaces</strong>. They are invisible, so when you can it is better to use a blank line and a new paragraph.","Bold, italic and code","Wrap the text between symbols: <code class=\"inline\">*</code> or <code class=\"inline\">_</code> for italic, doubled for bold.","↳ rendered result","<em>italic</em> or <em>italic</em>","<strong>bold</strong> or <strong>bold</strong>","<strong><em>bold and italic</em></strong>","Lists, quotes, rules","Bulleted lists","Start each item with a hyphen <code class=\"inline\">-</code> (<code class=\"inline\">*</code> or <code class=\"inline\">+</code> work too) and a space. To nest an item, indent it by two spaces.","↳ rendered result","First item","Second item\n                    <ul>\n                      <li>Sub-item</li>\n                      <li>Another sub-item</li>\n                    </ul>\n                  ","Sub-item","Another sub-item","Third item","Numbered lists","Use a number followed by a period. The starting number matters, but the following ones are renumbered automatically by the renderer: you can even always write <code class=\"inline\">1.</code> and let it handle the order.","↳ rendered result","First step","Second step","Third step","Quotes","A quote (<em>blockquote</em>) opens with the greater-than sign <code class=\"inline\">&gt;</code>. They can be nested and contain other elements.","↳ rendered result","This is a quote. It continues on the next line.","And this one is nested.","Horizontal rules","Three or more hyphens <code class=\"inline\">---</code> (or asterisks) on a line of their own create a separator line.","↳ rendered result","Above the line.","Below the line.","Blank lines matter","Many renderers recognize lists, quotes and horizontal rules only if you precede them with a blank line. When in doubt, let the blocks breathe with a blank line before and after: it is also more readable.","Links and images","Links and images share almost the same syntax: an image is simply a link with an exclamation mark in front.","Links","Between square brackets the visible text, between parentheses the address.","↳ rendered result","<a href=\"https://www.markdownguide.org\" target=\"_blank\" rel=\"noopener\">Markdown Guide</a>","With a title: <a href=\"https://example.com\" title=\"Home page\" target=\"_blank\" rel=\"noopener\">home</a>","A bare address: <a href=\"https://example.com\" target=\"_blank\" rel=\"noopener\">https://example.com</a>","To avoid cluttering the text, you can separate the address and call it back with a label, usually at the bottom of the document:","↳ rendered result","Read the <a href=\"https://www.markdownguide.org/basic-syntax/\" target=\"_blank\" rel=\"noopener\">documentation</a> for details.","Images","Same syntax, preceded by <code class=\"inline\">!</code>. The text between brackets is the alternative text (<em>alt</em>): important for accessibility and for when the image does not load.","↳ rendered result","Relative paths","In addresses you can use paths relative to the file (<code class=\"inline\">images/logo.png</code>) or absolute URLs. Relative paths make the document self-contained and easy to move together with its resources.","Code: inline and in blocks","Showing code or commands without having them interpreted is one of Markdown's strong points, and the reason programmers use it so much.","Inline code","Wrap a snippet between single <em>backticks</em> to render it in a fixed width, within a sentence.","↳ rendered result","Run <code>git status</code> to see the state.","If the snippet itself contains a backtick, wrap it between double backticks.","Code blocks","For a whole block, fence it between three backticks. By indicating the language right after the first three, many renderers apply syntax highlighting.","↳ rendered result","Where is the backtick?","The backtick (<code class=\"inline\">`</code>) is a key character in Markdown, but on Italian keyboards it has no dedicated key. On macOS you get it with <code class=\"inline\">⌥</code> + <code class=\"inline\">9</code>; it is worth learning the shortcut for your own system.","Tables","Tables are not part of original Markdown, but they are now a de facto standard, introduced by GitHub. You draw them with vertical bars <code class=\"inline\">|</code> and a row of hyphens that separates the header from the content.","↳ rendered result","Command","What it does","<code>git status</code>","shows the state","<code>git add</code>","stages the commit","The colons in the separator row control the column's alignment: left, center or right.","↳ rendered result","Left","Center","Right","text","text","text","The bars don't need to be perfectly aligned in the source: you can write them \"crooked\" and the renderer fixes them anyway. Aligning them, though, makes the source much more readable.","Table generators","Writing tables by hand is tedious. Many editors and sites (like Tables Generator, or the built-in table editor in VS Code) build them visually and produce the Markdown ready to paste.","Beyond the basics: GitHub Flavored Markdown","Gruber's original Markdown is deliberately minimal. Over the years <strong>variants</strong> have emerged that add useful features. The most widespread is <strong>GitHub Flavored Markdown</strong> (GFM), which you already met with tables.","Two names come up often, and it helps to know what they mean:","<strong>CommonMark</strong>: a strict specification that brings order to the ambiguities of original Markdown. It is the base almost all modern renderers rely on.","<strong>GitHub Flavored Markdown (GFM)</strong>: CommonMark plus GitHub's extensions, namely tables, checkboxes, strikethrough text and automatic link detection.","Checkboxes (task lists)","↳ rendered result","<input type=\"checkbox\" checked=\"\" disabled=\"\"> Write the draft","<input type=\"checkbox\" checked=\"\" disabled=\"\"> Proofread","<input type=\"checkbox\" disabled=\"\"> Publish","Strikethrough text","↳ rendered result","The price is <del>€100</del> €80.","Footnotes","Some variants (including GFM and Pandoc) support footnotes, with a reference in the text and the content elsewhere:","↳ rendered result","This sentence has a source.<sup class=\"fnref\">1</sup>","<sup>1.</sup> The source details.","Not everything is universal","Before relying on an extension, check that the target tool supports it. Tables, strikethrough and checkboxes are now extremely widespread; footnotes and math formulas, however, depend on the renderer. When in doubt, stick to CommonMark.","Converting and publishing","This is where Markdown shines: from a single source you generate almost any format. The flagship tool is <strong>Pandoc</strong>, a universal document converter.","Pandoc: the Swiss Army knife","Once Pandoc is installed, a single line turns your <code class=\"inline\">.md</code> into the format you need.","Pandoc reads and writes dozens of formats: besides PDF, Word and HTML, also slides (reveal.js, PowerPoint), ebooks (EPUB), LaTeX and many others.","Sites and documentation","To publish whole collections of Markdown pages online there are <em>static site</em> generators:","<strong>MkDocs</strong> and <strong>Material for MkDocs</strong>: technical documentation, ready in minutes.","<strong>Docusaurus</strong>, <strong>Hugo</strong> and <strong>Jekyll</strong> (the latter behind GitHub Pages): sites and blogs.","<strong>Slidev</strong> and <strong>Marp</strong>: presentations written entirely in Markdown.","Ready to go on GitHub","Often you don't even need to convert: GitHub, GitLab and the like render <code class=\"inline\">.md</code> files automatically. A <code class=\"inline\">README.md</code> file at the root of a repository becomes the project's landing page.","Write once, publish anywhere","It is the benefit that pays for everything: the same source becomes the project page on GitHub, the PDF to attach to an email and the slides for the presentation, without rewriting anything.","Cheatsheet: the syntax at a glance","All the Markdown you need every day, on two tables. Keep them handy until the symbols come naturally.","Basic syntax","Element","How you write it","Heading (levels 1–6)","<code># Heading</code> … <code>###### Heading</code>","Bold","<code>**text**</code>","Italic","<code>*text*</code>","Inline code","<code>`code`</code>","Links","<code>[text](address)</code>","Image","<code>![alt](path)</code>","Bulleted list","<code>- item</code>","Numbered list","<code>1. item</code>","Quote","<code>&gt; text</code>","Horizontal rule","<code>---</code>","Code block","<code>```language … ```</code>","Extended syntax (GitHub)","Element","How you write it","Table","<code>| A | B |</code> then <code>| --- | --- |</code>","Strikethrough text","<code>~~text~~</code>","Checkbox","<code>- [ ] to do</code> · <code>- [x] done</code>","Footnote","<code>text[^1]</code> and <code>[^1]: note</code>","References","Sources to go further. The <em>Markdown Guide</em> and the <em>CommonMark</em> specification are the references to keep within reach.","<a href=\"https://www.markdownguide.org\" target=\"_blank\" rel=\"noopener\">markdownguide.org</a><span class=\"d\">The reference guide</span>","<a href=\"https://www.markdownguide.org/basic-syntax/\" target=\"_blank\" rel=\"noopener\">Basic syntax</a><span class=\"d\">The essential building blocks</span>","<a href=\"https://www.markdownguide.org/cheat-sheet/\" target=\"_blank\" rel=\"noopener\">Cheat sheet</a><span class=\"d\">A one-page summary</span>","<a href=\"https://www.markdownguide.org/extended-syntax/\" target=\"_blank\" rel=\"noopener\">Extended syntax</a><span class=\"d\">Tables, code, footnotes</span>","<a href=\"https://commonmark.org\" target=\"_blank\" rel=\"noopener\">CommonMark</a><span class=\"d\">The reference specification</span>","<a href=\"https://commonmark.org/help/\" target=\"_blank\" rel=\"noopener\">CommonMark tutorial</a><span class=\"d\">Learn it in ten minutes</span>","<a href=\"https://github.github.com/gfm/\" target=\"_blank\" rel=\"noopener\">GitHub Flavored Markdown</a><span class=\"d\">GitHub's variant</span>","<a href=\"https://daringfireball.net/projects/markdown/syntax\" target=\"_blank\" rel=\"noopener\">Daring Fireball</a><span class=\"d\">Gruber's original syntax</span>","<a href=\"https://pandoc.org\" target=\"_blank\" rel=\"noopener\">Pandoc</a><span class=\"d\">Universal document conversion</span>","<a href=\"https://squidfunk.github.io/mkdocs-material/\" target=\"_blank\" rel=\"noopener\">Material for MkDocs</a><span class=\"d\">Documentation sites</span>","<a href=\"https://stackedit.io\" target=\"_blank\" rel=\"noopener\">StackEdit</a><span class=\"d\">Markdown editor in the browser</span>","<a href=\"https://babelmark.github.io\" target=\"_blank\" rel=\"noopener\">Babelmark 3</a><span class=\"d\">Compare the various renderers</span>","An introductory guide to Markdown, independent of the operating system. The examples are meant for learning: try them in an editor with a preview to see the render right away.","Sister guide: <a href=\"git.html\">Git, from scratch</a>, the ideal tool to version your Markdown files.","This guide is distributed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it\" target=\"_blank\" rel=\"license noopener\">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> license."],"icon":["John Gruber's original idea","Markdown Guide · Getting started","Markdown Guide · Basic syntax","Markdown Guide · Lists and quotes","Markdown Guide · Links and images","Markdown Guide · Code blocks","Markdown Guide · Tables","The GitHub Flavored Markdown spec","Pandoc · The universal converter","Markdown Guide · Full cheat sheet","Learning Markdown","Specs and variants","Tools"],"svgMap":{"Documento .docx":"Document .docx",".gdoc · .pages · binario":".gdoc · .pages · binary","richiede":"requires","Il programma giusto":"The right program","che ha creato il file":"that created it","solo testo · leggibile":"plain text · readable","basta":"enough","Qualsiasi editor":"Any editor","la sorgente":"the source","scrivi":"you write","sito · editor · Pandoc":"site · editor · Pandoc","Pagina web · HTML":"Web page · HTML","Documento Word":"Word document","Slide":"Slides"},"code":[{"name":"headings.md","body":"# Top-level heading\n## Section\n### Subsection"},{"name":"paragraphs.md","body":"This is a paragraph, written\non two lines but rendered as one.\n\nThis is a second paragraph,\nseparated from the first by a blank line."},{"name":"emphasis.md","body":"*italic* or _italic_\n**bold** or __bold__\n***bold and italic***"},{"name":"bulleted-list.md","body":"- First item\n- Second item\n  - Sub-item\n  - Another sub-item\n- Third item"},{"name":"numbered-list.md","body":"1. First step\n2. Second step\n3. Third step"},{"name":"blockquote.md","body":"> This is a quote.\n> It continues on the next line.\n>\n> > And this one is nested."},{"name":"rule.md","body":"Above the line.\n\n---\n\nBelow the line."},{"name":"link.md","body":"[Markdown Guide](https://www.markdownguide.org)\n\nWith a title: [home](https://example.com \"Home page\")\n\nA bare address: <https://example.com>"},{"name":"reference-link.md","body":"Read the [documentation][doc] for details.\n\n[doc]: https://www.markdownguide.org/basic-syntax/"},{"name":"image.md","body":"![Project logo](images/logo.png)\n\n![Diagram](diagram.svg \"Architecture\")"},{"name":"inline-code.md","body":"Run `git status` to see the state."},{"name":"code-block.md","body":"```python\ndef area(r):\n    return 3.14 * r * r\n```"},{"name":"table.md","body":"| Command      | What it does       |\n| ------------ | ------------------ |\n| `git status` | shows the state    |\n| `git add`    | stages the commit  |"},{"name":"alignment.md","body":"| Left  | Center | Right |\n| :---- | :----: | ----: |\n| text  | text   | text  |"},{"name":"task-list.md","body":"- [x] Write the draft\n- [x] Proofread\n- [ ] Publish"},{"name":"strikethrough.md","body":"The price is ~~€100~~ €80."},{"name":"footnote.md","body":"This sentence has a source.[^1]\n\n[^1]: The source details."},{"name":"terminal","body":"# from Markdown to PDF\npandoc document.md -o document.pdf\n\n# from Markdown to Word\npandoc document.md -o document.docx\n\n# from Markdown to a standalone HTML page\npandoc document.md -s -o document.html"}],"toc":["What Markdown is","How it works: source and render","The basics: headings & emphasis","Lists, quotes, rules","Links and images","Code","Tables","Beyond the basics: GFM","Converting and publishing","Cheatsheet","References"],"meta":{"title":"Markdown, a guide to get started","desc":"An introduction to Markdown for first-timers: why prefer it over WYSIWYG apps, basic syntax, links, images, code, tables, GitHub Flavored Markdown and converting to other formats.","brandTitle":"Markdown, from scratch","brandSub":"Writing in plain text · for today's beginners"}};
+
+  var CURRENT_LANG = 'it';
+  try { var _sl = localStorage.getItem('lang'); if (_sl === 'it' || _sl === 'en') CURRENT_LANG = _sl; } catch (e) {}
+
+  function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+  function tUI(k) { return (UI[CURRENT_LANG] && UI[CURRENT_LANG][k] != null) ? UI[CURRENT_LANG][k] : UI.it[k]; }
+
+  var CONTENT_SEL = '.article .eyebrow, .article h1, .article .lead, .article .chip, .article h2, .article h3, .article p, .article li, .article figcaption, .article th, .article td, .article .note .bd b';
+  var ICON_SEL = '.article .learn, .article .refcard h4';
+  var SVG_SEL = '.article .dgm text';
+
+  function contentEls() { return $all(CONTENT_SEL); }
+  function iconEls() { return $all(ICON_SEL); }
+  function svgEls() { return $all(SVG_SEL); }
+  function codeEls() { return $all('pre.code-src'); }
+  function tocEls() { return $all('#toc a > span:last-child'); }
+  function iconRest(el) { var c = el.cloneNode(true); var s = c.querySelector('svg'); if (s) s.remove(); return c.innerHTML.trim(); }
+
+  /* capture the Italian base from the DOM at load (before any transform) */
+  var BASE = {
+    content: contentEls().map(function (el) { return el.innerHTML; }),
+    icon: iconEls().map(iconRest),
+    svg: svgEls().map(function (el) { return el.textContent; }),
+    code: codeEls().map(function (el) { return { name: el.getAttribute('data-name') || '', body: el.textContent.replace(/\s+$/, '') }; }),
+    toc: tocEls().map(function (el) { return el.textContent; }),
+    meta: {
+      title: document.title,
+      desc: (document.querySelector('meta[name="description"]') || {}).content || '',
+      brandTitle: (document.querySelector('.brand .title b') || {}).textContent || '',
+      brandSub: (document.querySelector('.brand .title span') || {}).innerHTML || ''
+    }
+  };
+  window.__i18nDump = function () { return JSON.stringify(BASE); };
+
+  /* ---------- code blocks (rebuildable) ---------- */
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function highlight(raw, shell) {
+    return raw.split('\n').map(function (line) {
+      var t = line.replace(/\t/g, '  ');
+      /* Markdown source is shown verbatim, so its symbols (#, *, >, `) stay
+         visible; only shell blocks (data-sh) get comment/string coloring. */
+      if (!shell) return esc(t);
+      if (t.replace(/^\s+/, '').charAt(0) === '#') return '<span class="tok-c">' + esc(t) + '</span>';
+      var e = esc(t);
+      e = e.replace(/&quot;[^&]*&quot;|"[^"]*"/g, function (m) { return '<span class="tok-s">' + m + '</span>'; });
+      return e;
+    }).join('\n');
+  }
+  var copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+  var okIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function buildCodeBlocks() {
+    codeEls().forEach(function (pre) {
+      var prev = pre.nextElementSibling;
+      if (prev && prev.classList && prev.classList.contains('code') && prev.getAttribute('data-gen') === '1') prev.remove();
+      pre.style.display = 'none';
+      var raw = pre.textContent.replace(/\s+$/, '');
+      var name = pre.getAttribute('data-name') || tUI('terminal');
+      var wrap = document.createElement('div');
+      wrap.className = 'code'; wrap.setAttribute('data-gen', '1');
+      var head = document.createElement('div');
+      head.className = 'code-head';
+      head.innerHTML = '<span class="dots"><i></i><i></i><i></i></span><span class="name">' + esc(name) + '</span>';
+      var btn = document.createElement('button');
+      btn.className = 'copy'; btn.type = 'button';
+      btn.innerHTML = copyIcon + '<span>' + tUI('copy') + '</span>';
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(raw).then(function () {
+          btn.classList.add('done');
+          btn.innerHTML = okIcon + '<span>' + tUI('copied') + '</span>';
+          setTimeout(function () { btn.classList.remove('done'); btn.innerHTML = copyIcon + '<span>' + tUI('copy') + '</span>'; }, 1600);
+        });
+      });
+      head.appendChild(btn);
+      var newPre = document.createElement('pre');
+      newPre.innerHTML = highlight(raw, pre.hasAttribute('data-sh'));
+      wrap.appendChild(head); wrap.appendChild(newPre);
+      pre.parentNode.insertBefore(wrap, pre.nextSibling);
+    });
+  }
+
+  /* ---------- theme ---------- */
+  var mql = window.matchMedia('(prefers-color-scheme: dark)');
+  var order = ['auto', 'light', 'dark'];
+  function applyThemeLabel() {
+    var pref = root.getAttribute('data-theme-pref') || 'auto';
+    var key = { auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' }[pref];
+    if (themeLbl) themeLbl.textContent = tUI(key);
+    if (themeBtn) themeBtn.title = tUI('themeTitle') + ': ' + tUI(key);
+  }
+  function applyTheme(pref) {
+    var dark = pref === 'dark' || (pref === 'auto' && mql.matches);
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    root.setAttribute('data-theme-pref', pref);
+    applyThemeLabel();
+  }
+  themeBtn.addEventListener('click', function () {
+    var cur = root.getAttribute('data-theme-pref') || 'auto';
+    var next = order[(order.indexOf(cur) + 1) % order.length];
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    applyTheme(next);
+  });
+  mql.addEventListener('change', function () {
+    if ((root.getAttribute('data-theme-pref') || 'auto') === 'auto') applyTheme('auto');
+  });
+
+  /* ---------- language dropdown ---------- */
+  var langwrap = document.getElementById('langwrap');
+  var langBtn = document.getElementById('langBtn');
+  var langLbl = document.getElementById('langLbl');
+
+  function updateLangUI() {
+    if (langLbl) langLbl.textContent = CURRENT_LANG === 'en' ? 'EN' : 'IT';
+    var use = langBtn ? langBtn.querySelector('.flag use') : null;
+    if (use) { var id = CURRENT_LANG === 'en' ? '#flag-gb' : '#flag-it'; use.setAttribute('href', id); use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', id); }
+    $all('#langMenu li').forEach(function (li) { li.setAttribute('aria-selected', li.getAttribute('data-lang') === CURRENT_LANG ? 'true' : 'false'); });
+    if (langBtn) langBtn.title = tUI('langTitle');
+    if (menuBtn) menuBtn.setAttribute('aria-label', tUI('menu'));
+    var tk = document.querySelector('.toc-kicker'); if (tk) tk.textContent = tUI('tocKicker');
+  }
+
+  function applyLang(lang) {
+    CURRENT_LANG = lang;
+    var en = lang === 'en' ? EN_DICT : null;
+    contentEls().forEach(function (el, i) {
+      var v = (en && en.content && en.content[i] != null) ? en.content[i] : BASE.content[i];
+      if (v != null) el.innerHTML = v;
+    });
+    iconEls().forEach(function (el, i) {
+      var v = (en && en.icon && en.icon[i] != null) ? en.icon[i] : BASE.icon[i];
+      var svg = el.querySelector('svg');
+      el.innerHTML = (svg ? svg.outerHTML : '') + (v != null ? ' ' + v : '');
+    });
+    svgEls().forEach(function (el, i) {
+      var base = BASE.svg[i];
+      if (en && en.svgMap && en.svgMap[base] != null) el.textContent = en.svgMap[base];
+      else el.textContent = base;
+    });
+    codeEls().forEach(function (el, i) {
+      var src = (en && en.code && en.code[i]) ? en.code[i] : BASE.code[i];
+      if (src) { el.setAttribute('data-name', src.name); el.textContent = src.body; }
+    });
+    tocEls().forEach(function (el, i) {
+      var v = (en && en.toc && en.toc[i] != null) ? en.toc[i] : BASE.toc[i];
+      if (v != null) el.textContent = v;
+    });
+    var m = (en && en.meta) ? en.meta : BASE.meta;
+    document.title = m.title || BASE.meta.title;
+    var md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', m.desc || BASE.meta.desc);
+    var bt = document.querySelector('.brand .title b'); if (bt) bt.textContent = m.brandTitle || BASE.meta.brandTitle;
+    var bs = document.querySelector('.brand .title span'); if (bs) bs.innerHTML = m.brandSub || BASE.meta.brandSub;
+    root.setAttribute('lang', lang);
+    buildCodeBlocks();
+    applyThemeLabel();
+    updateLangUI();
+  }
+  function closeLang() { if (langwrap) langwrap.classList.remove('open'); if (langBtn) langBtn.setAttribute('aria-expanded', 'false'); }
+  function setLang(lang) { try { localStorage.setItem('lang', lang); } catch (e) {} applyLang(lang); }
+  if (langBtn) langBtn.addEventListener('click', function (e) { e.stopPropagation(); var open = langwrap.classList.toggle('open'); langBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+  $all('#langMenu li').forEach(function (li) {
+    li.addEventListener('click', function () { setLang(li.getAttribute('data-lang')); closeLang(); });
+    li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLang(li.getAttribute('data-lang')); closeLang(); } });
+  });
+  document.addEventListener('click', function (e) { if (langwrap && !langwrap.contains(e.target)) closeLang(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLang(); });
+
+  /* ---------- mobile drawer ---------- */
+  var scrim = document.getElementById('scrim');
+  function closeNav() { body.classList.remove('nav-open'); }
+  menuBtn.addEventListener('click', function () { body.classList.toggle('nav-open'); });
+  scrim.addEventListener('click', closeNav);
+
+  /* ---------- reading progress ---------- */
+  var progress = document.getElementById('progress');
+  function onScroll() { var h = document.documentElement; var max = h.scrollHeight - h.clientHeight; progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%'; }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------- scroll-spy ---------- */
+  var links = $all('#toc a');
+  var map = {};
+  links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  var sections = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  var spy = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { links.forEach(function (l) { l.classList.remove('active'); }); if (map[en.target.id]) map[en.target.id].classList.add('active'); }
+    });
+  }, { rootMargin: '-30% 0px -65% 0px', threshold: 0 });
+  sections.forEach(function (s) { if (s) spy.observe(s); });
+  links.forEach(function (a) { a.addEventListener('click', closeNav); });
+
+  /* ---------- reveal on scroll ---------- */
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) { $all('.reveal').forEach(function (el) { el.classList.add('in'); }); }
+  else {
+    var revObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); revObs.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: .08 });
+    $all('.reveal').forEach(function (el) { revObs.observe(el); });
+  }
+
+  /* ---------- init ---------- */
+  applyTheme(root.getAttribute('data-theme-pref') || 'auto');
+  applyLang(CURRENT_LANG);
+  onScroll();
+})();
+</script>
+</body>
+</html>
