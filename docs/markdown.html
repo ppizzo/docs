@@ -550,14 +550,15 @@ figure.diagram figcaption {
 }
 .foot a { color: var(--ink-soft); }
 .hub-link {
-  display: inline-flex; align-items: center; gap: 8px;
-  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 9px;
+  margin: 14px 0 0; padding: 14px 14px 0;
+  border-top: 1px solid var(--border);
   font-family: var(--font-mono); font-size: 13px;
   color: var(--ink-soft); text-decoration: none;
   transition: color .15s ease, gap .15s ease;
 }
-.hub-link:hover { color: var(--accent-ink); gap: 11px; }
-.hub-link svg { width: 16px; height: 16px; }
+.hub-link:hover { color: var(--accent-ink); gap: 12px; }
+.hub-link svg { width: 15px; height: 15px; flex: none; }
 .hub-link .t-en { display: none; }
 html[lang="en"] .hub-link .t-it { display: none; }
 html[lang="en"] .hub-link .t-en { display: inline; }
@@ -757,6 +758,10 @@ html[lang="en"] .hub-link .t-en { display: inline; }
         <li><a href="#cheatsheet"><span class="num">10</span><span>Cheatsheet</span></a></li>
         <li><a href="#riferimenti"><span class="num">11</span><span>Riferimenti</span></a></li>
       </ul>
+      <a class="hub-link" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        <span class="t-it">Tutte le guide</span><span class="t-en">All the guides</span>
+      </a>
     </nav>
   </aside>
 
@@ -1445,10 +1450,6 @@ pandoc documento.md -s -o documento.html</pre>
         </div>
 
         <div class="foot">
-          <a class="hub-link" href="index.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-            <span class="t-it">Tutte le guide</span><span class="t-en">All the guides</span>
-          </a>
           <p>Guida introduttiva al Markdown, indipendente dal sistema operativo. Gli esempi sono pensati per imparare: provali in un editor con anteprima per vederne subito la resa.</p>
           <p>Guida gemella: <a href="git.html">Git, da zero</a>, lo strumento ideale per versionare i tuoi file Markdown.</p>
           <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener" aria-label="CC BY-NC-SA 4.0">
