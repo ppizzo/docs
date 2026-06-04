@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentazione · Hub delle guide</title>
+<meta name="description" content="Hub della documentazione tecnica: guide pratiche, chiare e curate. Si parte con Git e Markdown, altre in arrivo.">
+
+<!-- Apply theme before first paint to avoid flash -->
+<script>
+(function () {
+  try {
+    var pref = localStorage.getItem('theme') || 'auto';
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var dark = pref === 'dark' || (pref === 'auto' && prefersDark);
+    var root = document.documentElement;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    root.setAttribute('data-theme-pref', pref);
+  } catch (e) {}
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   Theme tokens (shared with the guides)
+   ============================================================ */
+:root {
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --bg: #f7f2e9;
+  --surface: #fffdf8;
+  --surface-2: #f3ecdd;
+  --ink: #221d15;
+  --ink-soft: #4d4536;
+  --muted: #7c7263;
+  --border: #e3d9c7;
+  --border-strong: #d3c6ae;
+  --accent: #cf4b22;
+  --accent-ink: #b23c17;
+  --accent-soft: #fbe7dc;
+  --teal: #2c8a7c;
+  --teal-ink: #1f6b60;
+  --teal-soft: #d9efe9;
+  --amber: #b8852a;
+  --amber-soft: #f7ebcf;
+  --shadow: 0 1px 2px rgba(40, 30, 12, .05), 0 12px 30px -16px rgba(40, 30, 12, .22);
+  --shadow-sm: 0 1px 2px rgba(40, 30, 12, .06);
+  --shadow-lg: 0 2px 4px rgba(40, 30, 12, .06), 0 30px 60px -24px rgba(40, 30, 12, .34);
+  --sel: #f7d9c9;
+}
+[data-theme="dark"] {
+  --bg: #14110b;
+  --surface: #1d1810;
+  --surface-2: #241e15;
+  --ink: #ece4d4;
+  --ink-soft: #c8bda8;
+  --muted: #9a8e79;
+  --border: #2e2719;
+  --border-strong: #3c3422;
+  --accent: #ff7a4d;
+  --accent-ink: #ff8d63;
+  --accent-soft: #38211a;
+  --teal: #58c3b1;
+  --teal-ink: #7ad6c6;
+  --teal-soft: #163029;
+  --amber: #e0b35a;
+  --amber-soft: #322713;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 40px -22px rgba(0, 0, 0, .8);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, .45), 0 36px 70px -26px rgba(0, 0, 0, .9);
+  --sel: #4a2e1f;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1100px 520px at 88% -8%, var(--accent-soft) 0%, transparent 55%),
+    radial-gradient(900px 480px at -6% 4%, var(--teal-soft) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px; line-height: 1.7;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  display: flex; flex-direction: column;
+}
+::selection { background: var(--sel); }
+a { color: var(--accent-ink); text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+/* ============================================================
+   Top bar (shared with the guides)
+   ============================================================ */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px clamp(16px, 3vw, 40px);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(1.3) blur(12px);
+  -webkit-backdrop-filter: saturate(1.3) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; min-width: 0; }
+.brand .glyph {
+  flex: none; width: 38px; height: 38px;
+  display: grid; place-items: center; border-radius: 11px;
+  background: linear-gradient(145deg, var(--accent), #e8632f);
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.brand .glyph svg { width: 22px; height: 22px; display: block; }
+.brand .title { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.brand .title b { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: -.01em; color: var(--ink); }
+.brand .title span { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.toolbtn {
+  flex: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 12px;
+  font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: 10px; box-shadow: var(--shadow-sm);
+  transition: border-color .15s ease, transform .1s ease, color .15s ease;
+}
+.toolbtn:hover { border-color: var(--accent); color: var(--accent-ink); }
+.toolbtn:active { transform: translateY(1px); }
+.toolbtn svg { width: 17px; height: 17px; }
+.toolbtn .lbl { text-transform: capitalize; }
+
+[data-theme-pref="auto"]  #themeBtn .i-auto,
+[data-theme-pref="light"] #themeBtn .i-light,
+[data-theme-pref="dark"]  #themeBtn .i-dark { display: inline; }
+#themeBtn svg { display: none; }
+
+.langwrap { position: relative; flex: none; }
+#langBtn { gap: 7px; }
+#langBtn .lbl { text-transform: none; font-weight: 600; }
+#langBtn .chev { width: 13px; height: 13px; opacity: .55; transition: transform .2s ease; }
+#langBtn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.flag {
+  width: 22px; height: 15px; flex: none; display: inline-block;
+  border-radius: 3px; overflow: hidden; vertical-align: middle;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 16%, transparent);
+}
+.langmenu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 80;
+  margin: 0; padding: 6px; list-style: none; min-width: 172px;
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: 12px; box-shadow: var(--shadow);
+  opacity: 0; transform: translateY(-6px) scale(.98); transform-origin: top right;
+  pointer-events: none; transition: opacity .16s ease, transform .16s ease;
+}
+.langwrap.open .langmenu { opacity: 1; transform: none; pointer-events: auto; }
+.langmenu li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-body); font-size: 15.5px; color: var(--ink-soft);
+}
+.langmenu li:hover, .langmenu li:focus-visible { background: var(--surface-2); color: var(--ink); outline: none; }
+.langmenu li[aria-selected="true"] { color: var(--accent-ink); font-weight: 600; }
+.langmenu li[aria-selected="true"] span::after { content: "✓"; margin-left: auto; padding-left: 10px; color: var(--accent); }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+main { flex: 1 0 auto; width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); }
+
+/* Hero */
+.hero { padding: clamp(40px, 8vw, 86px) 0 clamp(28px, 4vw, 44px); max-width: 760px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 24px;
+}
+.eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.hero h1 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(38px, 7vw, 66px); line-height: 1.03;
+  letter-spacing: -.025em; margin: 0 0 18px; color: var(--ink);
+}
+.hero h1 em { font-style: italic; color: var(--accent-ink); font-weight: 500; }
+.hero .lead { font-size: clamp(17px, 2.2vw, 21px); line-height: 1.6; color: var(--ink-soft); margin: 0; }
+.hero .meta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--ink-soft); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; box-shadow: var(--shadow-sm);
+}
+.chip b { color: var(--accent-ink); font-weight: 600; }
+
+/* Section label */
+.shelf-label {
+  display: flex; align-items: center; gap: 14px;
+  margin: 8px 0 22px; font-family: var(--font-mono);
+  font-size: 12px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.shelf-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-strong), transparent); }
+
+/* ============================================================
+   Document cards
+   ============================================================ */
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(16px, 2vw, 22px); }
+
+.doccard {
+  position: relative; display: flex; flex-direction: column;
+  padding: clamp(22px, 2.4vw, 30px);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; box-shadow: var(--shadow);
+  text-decoration: none; color: inherit;
+  overflow: hidden;
+  transition: transform .22s cubic-bezier(.2,.7,.3,1), border-color .22s ease, box-shadow .22s ease;
+}
+/* accent wash that blooms on hover */
+.doccard::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(420px 200px at 100% 0%, var(--card-soft) 0%, transparent 60%);
+  opacity: .55; transition: opacity .22s ease;
+}
+.doccard:hover { transform: translateY(-5px); border-color: var(--card-stroke); box-shadow: var(--shadow-lg); }
+.doccard:hover::before { opacity: 1; }
+.doccard:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.doccard .ic {
+  position: relative; flex: none; width: 58px; height: 58px;
+  display: grid; place-items: center; border-radius: 15px;
+  background: var(--card-grad);
+  box-shadow: 0 10px 22px -10px var(--card-shadow);
+  margin-bottom: 20px;
+}
+.doccard .ic svg { width: 32px; height: 32px; display: block; }
+
+.doccard .kicker {
+  position: relative;
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink);
+  margin-bottom: 9px;
+}
+.doccard h2 {
+  position: relative;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(24px, 3vw, 30px); letter-spacing: -.02em;
+  margin: 0 0 10px; color: var(--ink);
+}
+.doccard .desc { position: relative; font-size: 16.5px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 20px; }
+
+.doccard .tags { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.tag {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--muted);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 4px 9px;
+}
+
+.doccard .go {
+  position: relative; margin-top: auto;
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+  color: var(--card-ink);
+}
+.doccard .go svg { width: 17px; height: 17px; transition: transform .22s cubic-bezier(.2,.7,.3,1); }
+.doccard:hover .go svg { transform: translateX(5px); }
+
+/* per-card accent palettes */
+.doccard.git {
+  --card-grad: linear-gradient(145deg, var(--accent), #e8632f);
+  --card-soft: var(--accent-soft); --card-stroke: color-mix(in srgb, var(--accent) 50%, var(--border));
+  --card-ink: var(--accent-ink); --card-shadow: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.doccard.md {
+  --card-grad: linear-gradient(145deg, var(--teal), #2f9f8f);
+  --card-soft: var(--teal-soft); --card-stroke: color-mix(in srgb, var(--teal) 50%, var(--border));
+  --card-ink: var(--teal-ink); --card-shadow: color-mix(in srgb, var(--teal) 55%, transparent);
+}
+
+/* coming-soon card */
+.soon {
+  margin-top: clamp(16px, 2vw, 22px);
+  display: flex; align-items: center; gap: 20px;
+  padding: clamp(20px, 2.4vw, 26px) clamp(22px, 2.6vw, 30px);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border: 1.5px dashed var(--border-strong); border-radius: 18px;
+}
+.soon .ic {
+  flex: none; width: 50px; height: 50px; display: grid; place-items: center;
+  border-radius: 14px; color: var(--muted);
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.soon .ic svg { width: 24px; height: 24px; }
+.soon .bd { min-width: 0; }
+.soon h3 { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin: 0 0 4px; color: var(--ink-soft); }
+.soon p { margin: 0; font-size: 15px; color: var(--muted); line-height: 1.55; }
+.soon p a { color: var(--accent-ink); }
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.foot {
+  margin-top: clamp(40px, 6vw, 70px);
+  border-top: 1px solid var(--border);
+  padding: 26px clamp(16px, 3vw, 40px) 36px;
+  max-width: 1080px; margin-left: auto; margin-right: auto; width: 100%;
+  font-size: 13.5px; color: var(--muted); line-height: 1.6;
+}
+.foot a { color: var(--ink-soft); }
+.cc-badge { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 10px; color: var(--ink-soft); }
+.cc-badge svg { width: 22px; height: 22px; fill: currentColor; display: block; }
+.cc-badge:hover { color: var(--accent); }
+
+/* ============================================================
+   Entrance animation
+   ============================================================ */
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.anim { opacity: 0; animation: rise .7s cubic-bezier(.2,.7,.3,1) forwards; }
+.d1 { animation-delay: .05s; } .d2 { animation-delay: .13s; } .d3 { animation-delay: .22s; }
+.d4 { animation-delay: .31s; } .d5 { animation-delay: .4s; }
+
+@media (max-width: 760px) {
+  body { font-size: 17px; }
+  .cards { grid-template-columns: 1fr; }
+  .soon { flex-direction: column; align-items: flex-start; text-align: left; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- shared flag symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="flag-it" viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice">
+      <rect width="3" height="2" fill="#f4f4f2"/>
+      <rect width="1" height="2" fill="#009246"/>
+      <rect x="2" width="1" height="2" fill="#ce2b37"/>
+    </symbol>
+    <symbol id="flag-gb" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice">
+      <rect width="60" height="30" fill="#012169"/>
+      <g stroke="#fff" stroke-width="6"><path d="M0,0 60,30"/><path d="M60,0 0,30"/></g>
+      <g stroke="#c8102e" stroke-width="2.4"><path d="M0,0 60,30"/><path d="M60,0 0,30"/></g>
+      <rect x="25" width="10" height="30" fill="#fff"/>
+      <rect y="10" width="60" height="10" fill="#fff"/>
+      <rect x="27" width="6" height="30" fill="#c8102e"/>
+      <rect y="12" width="60" height="6" fill="#c8102e"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============================ TOP BAR ============================ -->
+<header class="topbar">
+  <div class="brand">
+    <span class="glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/>
+        <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/>
+      </svg>
+    </span>
+    <span class="title">
+      <b data-i18n="brandTitle">Documentazione</b>
+      <span data-i18n="brandSub">Guide pratiche &middot; italiano e inglese</span>
+    </span>
+  </div>
+  <button class="toolbtn" id="themeBtn" aria-label="Cambia tema" title="Tema: automatico">
+    <svg class="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <svg class="i-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+    <svg class="i-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8z"/></svg>
+    <span class="lbl" id="themeLbl">auto</span>
+  </button>
+  <div class="langwrap" id="langwrap">
+    <button class="toolbtn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" title="Lingua">
+      <svg class="flag" aria-hidden="true"><use href="#flag-it"/></svg>
+      <span class="lbl" id="langLbl">IT</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <ul class="langmenu" id="langMenu" role="listbox" aria-label="Lingua / Language">
+      <li role="option" data-lang="it" tabindex="0" aria-selected="true"><svg class="flag" aria-hidden="true"><use href="#flag-it"/></svg><span>Italiano</span></li>
+      <li role="option" data-lang="en" tabindex="0" aria-selected="false"><svg class="flag" aria-hidden="true"><use href="#flag-gb"/></svg><span>English</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============================ MAIN ============================ -->
+<main>
+  <section class="hero">
+    <span class="eyebrow anim d1"><span class="dot"></span><span data-i18n="eyebrow">Hub della documentazione</span></span>
+    <h1 class="anim d2" data-i18n="title">Una piccola <em>biblioteca</em> di guide.</h1>
+    <p class="lead anim d3" data-i18n="lead">Un punto unico per la documentazione tecnica: guide chiare, curate e pratiche, da consultare quando servono. Si parte con Git e Markdown, altre arriveranno.</p>
+    <div class="meta anim d3">
+      <span class="chip" data-i18n="chip1"><b>2</b> guide</span>
+      <span class="chip" data-i18n="chip2">Tema chiaro e scuro</span>
+      <span class="chip" data-i18n="chip3">Italiano &middot; English</span>
+    </div>
+  </section>
+
+  <div class="shelf-label anim d3"><span data-i18n="shelf">Le guide</span></div>
+
+  <div class="cards">
+    <!-- GIT -->
+    <a class="doccard git anim d4" href="git.html" aria-label="Apri la guida a Git">
+      <span class="ic" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/>
+          <path d="M6 8.4v7.2"/><path d="M18 11.4c0 3-2.6 3.6-5.4 3.6H8.4"/>
+        </svg>
+      </span>
+      <div class="kicker" data-i18n="gitKicker">Controllo di versione</div>
+      <h2 data-i18n="gitTitle">Git, da zero</h2>
+      <p class="desc" data-i18n="gitDesc">Dal primo repository fino a GitHub, branch e tag. Le tre aree, i commit e le chiavi SSH, un comando alla volta.</p>
+      <div class="tags">
+        <span class="tag">macOS · Linux</span>
+        <span class="tag" data-i18n="gitTag2">11 capitoli</span>
+        <span class="tag">IT · EN</span>
+      </div>
+      <span class="go"><span data-i18n="open">Apri la guida</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+    <!-- MARKDOWN -->
+    <a class="doccard md anim d5" href="markdown.html" aria-label="Apri la guida al Markdown">
+      <span class="ic" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
+          <path d="M6 15V9l3 3 3-3v6"/>
+          <path d="M16.7 9v4.8M14.5 11.6l2.2 2.2 2.2-2.2"/>
+        </svg>
+      </span>
+      <div class="kicker" data-i18n="mdKicker">Scrittura · testo semplice</div>
+      <h2 data-i18n="mdTitle">Markdown, da zero</h2>
+      <p class="desc" data-i18n="mdDesc">Scrivere documenti formattati con solo testo: sintassi di base, link, tabelle, GFM e conversione in PDF, con sorgente e resa fianco a fianco.</p>
+      <div class="tags">
+        <span class="tag" data-i18n="mdTag1">Sintassi · GFM</span>
+        <span class="tag" data-i18n="mdTag2">11 capitoli</span>
+        <span class="tag">IT · EN</span>
+      </div>
+      <span class="go"><span data-i18n="open">Apri la guida</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- COMING SOON -->
+  <div class="soon anim d5">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    </span>
+    <div class="bd">
+      <h3 data-i18n="soonTitle">Altri contenuti in arrivo</h3>
+      <p data-i18n="soonDesc">Questo hub crescerà con nuove guide e riferimenti. Hai un argomento da proporre? Apri una issue sul repository.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="foot">
+  <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener" aria-label="CC BY-NC-SA 4.0">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.957,0.311c-8.682,0-16.322,3.213-22.226,9.203C3.653,15.678,0.354,23.666,0.354,32c0,8.422,3.212,16.236,9.29,22.313c6.078,6.078,13.978,9.377,22.313,9.377c8.334,0,16.409-3.299,22.66-9.463c5.904-5.817,9.029-13.544,9.029-22.227c0-8.595-3.125-16.408-9.116-22.399C48.453,3.523,40.639,0.311,31.957,0.311z M32.043,6.041c7.12,0,13.458,2.691,18.406,7.641c4.862,4.861,7.466,11.286,7.466,18.318c0,7.119-2.518,13.371-7.379,18.146c-5.123,5.035-11.721,7.727-18.493,7.727c-6.858,0-13.283-2.691-18.232-7.641C8.862,45.283,6.084,38.772,6.084,32c0-6.858,2.778-13.369,7.727-18.406C18.673,8.646,24.924,6.041,32.043,6.041z"/><path id="cc-c" d="M31.635,26.734c-1.79-3.264-4.844-4.563-8.389-4.563c-5.16,0-9.267,3.65-9.267,9.828c0,6.283,3.861,9.829,9.442,9.829c3.581,0,6.635-1.966,8.319-4.949l-3.931-2.001c-0.878,2.105-2.212,2.738-3.896,2.738c-2.914,0-4.248-2.422-4.248-5.617c0-3.193,1.124-5.616,4.248-5.616c0.842,0,2.527,0.456,3.51,2.563L31.635,26.734z"/><use xlink:href="#cc-c" href="#cc-c" transform="translate(18.281)"/></svg>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.1875,0C13.90625,0.4375,0,14.613281,0,32C0,49.664063,14.335938,64,32,64C49.664063,64,64,49.664063,64,32C64,14.335938,49.664063,0,32,0C31.722656,0,31.460938-0.0078125,31.1875,0z M31.15625,5.5C31.441406,5.492188,31.714844,5.5,32,5.5C46.628906,5.5,58.5,17.371094,58.5,32C58.5,46.628906,46.628906,58.5,32,58.5C17.371094,58.5,5.5,46.628906,5.5,32C5.5,17.65625,16.921875,5.953125,31.15625,5.5z"/><path d="M36.625,15.9375C36.625,18.488281,34.554688,20.5625,32,20.5625C29.445313,20.5625,27.375,18.488281,27.375,15.9375C27.375,13.382813,29.445313,11.3125,32,11.3125C34.554688,11.3125,36.625,13.382813,36.625,15.9375z"/><path d="M27.214844,52.6875L36.785156,52.6875L36.785156,37.3125L39.679688,37.3125C39.679688,37.3125,39.675781,26.320313,39.679688,24.589844C39.675781,24.132813,39.71875,23.226563,39.058594,22.5625C38.394531,21.902344,37.5,21.941406,37.03125,21.941406C36.558594,21.945313,27.441406,21.945313,26.96875,21.941406C26.5,21.941406,25.605469,21.902344,24.941406,22.5625C24.28125,23.226563,24.324219,24.132813,24.320313,24.589844C24.324219,26.320313,24.320313,37.3125,24.320313,37.3125L27.214844,37.3125z"/></svg>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.1875,0C13.90625,0.4375,0,14.613281,0,32C0,49.664063,14.335938,64,32,64C49.664063,64,64,49.664063,64,32C64,14.335938,49.664063,0,32,0C31.722656,0,31.460938-0.0078125,31.1875,0z M31.15625,5.5C31.441406,5.492188,31.714844,5.5,32,5.5C46.628906,5.5,58.5,17.371094,58.5,32C58.5,46.628906,46.628906,58.5,32,58.5C17.371094,58.5,5.5,46.628906,5.5,32C5.5,17.65625,16.921875,5.953125,31.15625,5.5z"/><path d="M25.644531,38.742188C27.707031,41.625,33.996094,41.832031,36.15625,40.613281C36.949219,40.164063,37.144531,38.863281,37.144531,37.984375C37.144531,37.378906,36.988281,36.90625,36.667969,36.558594C36.332031,36.214844,35.480469,35.339844,34.492188,35.082031C29.472656,33.785156,26,32.167969,24.636719,30.996094C22.941406,29.527344,22.667969,28.570313,22.667969,26.015625C22.667969,23.460938,23.402344,21.320313,25.0625,19.785156C26.722656,18.25,29.136719,17.480469,32.296875,17.480469C35.316406,17.480469,39.566406,18.277344,41.636719,20.738281L38.183594,24.492188C36.234375,22.859375,34.789063,22.710938,32.402344,22.710938C30.902344,22.710938,30.121094,22.925781,29.484375,23.359375C28.847656,23.773438,28.53125,24.316406,28.53125,24.988281C28.53125,25.59375,28.820313,26.09375,29.40625,26.488281C29.988281,26.90625,31.511719,27.527344,34.550781,28.355469C37.957031,29.285156,40.273438,30.417969,41.492188,31.746094C42.691406,33.074219,43.292969,34.84375,43.292969,37.050781C43.292969,39.710938,42.355469,41.902344,40.484375,43.628906C38.628906,45.355469,36.347656,46.695313,33.0625,46.695313C28.832031,46.695313,23.1875,45.199219,21.628906,42.441406z"/><path d="M59.34375,40.105469L56.9375,45.386719L5.816406,22.351563L8.222656,17.070313z"/><path d="M30.375,12.875L30.375,19.71875L33.625,19.71875L33.625,12.875z M30.375,44.96875L30.375,51.125L33.625,51.125L33.625,44.96875z"/></svg>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31.1875,0C13.904525,0.43835438,0,14.612004,0,32C0,49.663996,14.336004,64,32,64C49.663996,64,64,49.663996,64,32C64,14.336004,49.663996,0,32,0C31.724,0,31.461833-0.006958,31.1875,0z M31.15625,5.5C31.439783,5.4910103,31.714297,5.5,32,5.5C46.628003,5.5,58.5,17.371998,58.5,32C58.499998,46.628001,46.628002,58.5,32,58.5C17.371999,58.499999,5.5,46.628002,5.5,32C5.4999999,17.657701,16.922915,5.9512829,31.15625,5.5z"/><path d="M18.115779,26.784547L15.375001,26.784547L21.593751,33.753297L27.812501,26.784547L25.568649,26.784547C26.054748,23.384747,29.04552,21.198122,32.500001,21.472047C32.636557,21.482875,32.767855,21.472047,32.906251,21.472047C38.533681,21.472047,40.753071,25.727912,40.937501,32.003297C41.129971,38.552496,37.334011,42.623673,32.906251,42.534547C28.232865,42.442333,26.462202,40.207037,25.781251,36.815797L17.437501,36.815797C18.810678,44.627028,24.561356,49.207833,32.718751,49.222047C41.953331,49.238298,48.624999,41.5127,48.624999,32.003297C48.624999,21.848404,41.955631,14.784547,32.718751,14.784547C32.444507,14.784547,32.177099,14.769654,31.906251,14.784547C31.840655,14.788154,31.784281,14.783475,31.718751,14.784547C25.946542,14.880519,18.115822,18.924289,18.115779,26.784547z"/></svg>
+  </a>
+  <p data-i18n="footer">Hub della documentazione tecnica. Contenuti distribuiti con licenza <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener">Creative Commons BY-NC-SA 4.0</a>.</p>
+</footer>
+
+<!-- ============================ SCRIPTS ============================ -->
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  var themeLbl = document.getElementById('themeLbl');
+
+  var UI = {
+    it: { themeAuto: 'auto', themeLight: 'chiaro', themeDark: 'scuro', themeTitle: 'Tema', langTitle: 'Lingua' },
+    en: { themeAuto: 'auto', themeLight: 'light', themeDark: 'dark', themeTitle: 'Theme', langTitle: 'Language' }
+  };
+
+  /* page strings, IT + EN */
+  var I18N = {
+    brandTitle: { it: 'Documentazione', en: 'Documentation' },
+    brandSub:   { it: 'Guide pratiche &middot; italiano e inglese', en: 'Practical guides &middot; Italian and English' },
+    eyebrow:    { it: 'Hub della documentazione', en: 'Documentation hub' },
+    title:      { it: 'Una piccola <em>biblioteca</em> di guide.', en: 'A small <em>library</em> of guides.' },
+    lead:       { it: 'Un punto unico per la documentazione tecnica: guide chiare, curate e pratiche, da consultare quando servono. Si parte con Git e Markdown, altre arriveranno.', en: "A single home for the team's technical documentation: clear, polished, practical guides to consult when you need them. We start with Git and Markdown, more will come." },
+    chip1:      { it: '<b>2</b> guide', en: '<b>2</b> guides' },
+    chip2:      { it: 'Tema chiaro e scuro', en: 'Light &amp; dark theme' },
+    chip3:      { it: 'Italiano &middot; English', en: 'Italian &middot; English' },
+    shelf:      { it: 'Le guide', en: 'The guides' },
+    gitKicker:  { it: 'Controllo di versione', en: 'Version control' },
+    gitTitle:   { it: 'Git, da zero', en: 'Git, from scratch' },
+    gitDesc:    { it: 'Dal primo repository fino a GitHub, branch e tag. Le tre aree, i commit e le chiavi SSH, un comando alla volta.', en: 'From your first repository to GitHub, branches and tags. The three areas, commits and SSH keys, one command at a time.' },
+    gitTag2:    { it: '11 capitoli', en: '11 chapters' },
+    mdKicker:   { it: 'Scrittura · testo semplice', en: 'Writing · plain text' },
+    mdTitle:    { it: 'Markdown, da zero', en: 'Markdown, from scratch' },
+    mdDesc:     { it: 'Scrivere documenti formattati con solo testo: sintassi di base, link, tabelle, GFM e conversione in PDF, con sorgente e resa fianco a fianco.', en: 'Write formatted documents with just text: basic syntax, links, tables, GFM and PDF conversion, with source and render side by side.' },
+    mdTag1:     { it: 'Sintassi · GFM', en: 'Syntax · GFM' },
+    mdTag2:     { it: '11 capitoli', en: '11 chapters' },
+    open:       { it: 'Apri la guida', en: 'Open the guide' },
+    soonTitle:  { it: 'Altri contenuti in arrivo', en: 'More content on the way' },
+    soonDesc:   { it: 'Questo hub crescerà con nuove guide e riferimenti. Hai un argomento da proporre? Apri una issue sul repository.', en: 'This hub will grow with new guides and references. Have a topic to suggest? Open an issue on the repository.' },
+    footer:     { it: 'Hub della documentazione tecnica. Contenuti distribuiti con licenza <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener">Creative Commons BY-NC-SA 4.0</a>.', en: 'Technical documentation hub. Content distributed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" rel="license noopener">Creative Commons BY-NC-SA 4.0</a> license.' }
+  };
+  var META = {
+    it: { title: 'Documentazione · Hub delle guide', desc: 'Hub della documentazione tecnica: guide pratiche, chiare e curate. Si parte con Git e Markdown, altre in arrivo.' },
+    en: { title: 'Documentation · Guides hub', desc: 'A technical documentation hub: clear, polished, practical guides. Starting with Git and Markdown, more on the way.' }
+  };
+
+  var LANG = 'it';
+  try { var sl = localStorage.getItem('lang'); if (sl === 'it' || sl === 'en') LANG = sl; } catch (e) {}
+
+  function $all(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function tUI(k) { return (UI[LANG] && UI[LANG][k]) || UI.it[k]; }
+
+  /* ---------- theme ---------- */
+  var mql = window.matchMedia('(prefers-color-scheme: dark)');
+  var order = ['auto', 'light', 'dark'];
+  function applyThemeLabel() {
+    var pref = root.getAttribute('data-theme-pref') || 'auto';
+    var key = { auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' }[pref];
+    if (themeLbl) themeLbl.textContent = tUI(key);
+    if (themeBtn) themeBtn.title = tUI('themeTitle') + ': ' + tUI(key);
+  }
+  function applyTheme(pref) {
+    var dark = pref === 'dark' || (pref === 'auto' && mql.matches);
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    root.setAttribute('data-theme-pref', pref);
+    applyThemeLabel();
+  }
+  themeBtn.addEventListener('click', function () {
+    var cur = root.getAttribute('data-theme-pref') || 'auto';
+    var next = order[(order.indexOf(cur) + 1) % order.length];
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    applyTheme(next);
+  });
+  mql.addEventListener('change', function () {
+    if ((root.getAttribute('data-theme-pref') || 'auto') === 'auto') applyTheme('auto');
+  });
+
+  /* ---------- language ---------- */
+  var langwrap = document.getElementById('langwrap');
+  var langBtn = document.getElementById('langBtn');
+  var langLbl = document.getElementById('langLbl');
+
+  function applyLang(lang) {
+    LANG = lang;
+    $all('[data-i18n]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n');
+      if (I18N[k] && I18N[k][lang] != null) el.innerHTML = I18N[k][lang];
+    });
+    var m = META[lang] || META.it;
+    document.title = m.title;
+    var md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', m.desc);
+    root.setAttribute('lang', lang);
+    if (langLbl) langLbl.textContent = lang === 'en' ? 'EN' : 'IT';
+    var use = langBtn ? langBtn.querySelector('.flag use') : null;
+    if (use) { var id = lang === 'en' ? '#flag-gb' : '#flag-it'; use.setAttribute('href', id); use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', id); }
+    $all('#langMenu li').forEach(function (li) { li.setAttribute('aria-selected', li.getAttribute('data-lang') === lang ? 'true' : 'false'); });
+    if (langBtn) langBtn.title = tUI('langTitle');
+    applyThemeLabel();
+  }
+  function closeLang() { langwrap.classList.remove('open'); langBtn.setAttribute('aria-expanded', 'false'); }
+  function setLang(lang) { try { localStorage.setItem('lang', lang); } catch (e) {} applyLang(lang); }
+  langBtn.addEventListener('click', function (e) { e.stopPropagation(); var open = langwrap.classList.toggle('open'); langBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+  $all('#langMenu li').forEach(function (li) {
+    li.addEventListener('click', function () { setLang(li.getAttribute('data-lang')); closeLang(); });
+    li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLang(li.getAttribute('data-lang')); closeLang(); } });
+  });
+  document.addEventListener('click', function (e) { if (!langwrap.contains(e.target)) closeLang(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLang(); });
+
+  /* ---------- init ---------- */
+  applyTheme(root.getAttribute('data-theme-pref') || 'auto');
+  applyLang(LANG);
+})();
+</script>
+</body>
+</html>
