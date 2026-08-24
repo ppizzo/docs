@@ -520,7 +520,11 @@ main { flex: 1 0 auto; width: 100%; max-width: 1080px; margin: 0 auto; padding: 
     en: { title: 'Documentation · Guides hub', desc: 'A technical documentation hub: clear, polished, practical guides. Starting with Git and Markdown, more on the way.' }
   };
 
-  var LANG = 'it';
+  function detectLang() {
+    var b = navigator.languages ? navigator.languages[0] : navigator.language;
+    return (b || '').toLowerCase().indexOf('it') === 0 ? 'it' : 'en';
+  }
+  var LANG = detectLang();
   try { var sl = localStorage.getItem('lang'); if (sl === 'it' || sl === 'en') LANG = sl; } catch (e) {}
 
   function $all(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
